@@ -1,7 +1,16 @@
 import os
-import argparse
-from dotenv import load_dotenv
+import copy
+import yaml
+import httpx
+import base64
 
+from fastmcp import FastMCP
+from dotenv import load_dotenv
+from argparse import ArgumentParser, Namespace
+from fastmcp.server.openapi import MCPType, HTTPRoute
+from typing import Dict, List, Optional, Any, Callable
+
+# ===== Config and Server Info =====
 load_dotenv()
 
 bandwidth_account_id = os.environ["BW_ACCOUNT_ID"]
@@ -11,8 +20,7 @@ username = os.environ["BW_USERNAME"]
 password = os.environ["BW_PASSWORD"].replace("\\", "")
 
 
-
-def get_config():
+def get_config() -> Dict[str, Any]:
     """Get the Bandwidth configuration"""
     return {
         "bandwidth_account_id": bandwidth_account_id,
@@ -23,14 +31,109 @@ def get_config():
     }
 
 
-def clean_openapi_spec(spec: dict):
+async def print_server_info(mcp: FastMCP) -> None:
+    """Print concise server information."""
+    try:
+        all_tools = await mcp.get_tools()
+        all_resources = await mcp.get_resources()
+        
+        tool_names = list(all_tools.keys())
+        resource_names = [resource.name for resource in all_resources.values()]
+
+        print("Bandwidth MCP Server Started")
+        print(f"Tools ({len(tool_names)}): {', '.join(sorted(tool_names)) if tool_names else 'None'}")
+        print(f"Resources ({len(resource_names)}): {', '.join(sorted(resource_names)) if resource_names else 'None'}")
+        
+    except Exception as e:
+        print(f"Error retrieving server info: {e}")
+        print("Server may still be functional")
+
+
+# ===== Server Flags =====
+def _parse_cli_args(args: Optional[List[str]] = None) -> Namespace:
+    """Parse command line arguments with proper type hints."""
+    parser = ArgumentParser(description="Bandwidth MCP Server")
+
+    # Tools
+    parser.add_argument(
+        "--tools",
+        help="Comma-separated list of tool names to enable. If not specified, all tools are enabled.",
+        type=str,
+    )
+    parser.add_argument(
+        "--exclude-tools",
+        help="Comma-separated list of tool names to disable.",
+        type=str,
+    )
+
+    return parser.parse_known_args(args)[0]
+
+
+def _parse_arg_list(arg_string: str) -> List[str]:
+    """Parse a comma-separated argument string into a list."""
+    return [item.strip() for item in arg_string.split(",") if item.strip()]
+
+
+def _parse_flags(cli_arg: Optional[str], env_var: str) -> Optional[List[str]]:
+    """Get flag values from CLI argument or environment variable."""
+    # Try CLI argument first
+    if cli_arg:
+        return _parse_arg_list(cli_arg)
+    
+    # Fall back to environment variable
+    env_value = os.getenv(env_var)
+    if env_value:
+        return _parse_arg_list(env_value)
+    
+    return None
+
+
+# ===== Tool Management =====
+def get_enabled_tools() -> Optional[List[str]]:
+    """Get the list of enabled tools from CLI args or environment variable."""
+    args = _parse_cli_args()
+    return _parse_flags(args.tools, "BW_MCP_TOOLS")
+
+
+def get_excluded_tools() -> Optional[List[str]]:
+    """Get the list of excluded tools from CLI args or environment variable."""
+    args = _parse_cli_args()
+    return _parse_flags(args.exclude_tools, "BW_MCP_EXCLUDE_TOOLS")
+
+
+def create_route_map_fn(enabled_tools: Optional[List[str]], excluded_tools: Optional[List[str]]) -> Callable[[HTTPRoute, MCPType], MCPType]:
+    """Create a route map function based on enabled and excluded tools.
+    
+    Args:
+        enabled_tools: List of tools to enable. If None, all tools are enabled.
+        excluded_tools: List of tools to exclude. Takes priority over enabled_tools.
+        
+    Returns:
+        A function that maps routes to MCP types based on the tool configuration.
+    """
+    def route_map_fn(route: HTTPRoute, mcp_type: MCPType) -> MCPType:
+        # Excluded tools have priority - if provided, ignore enabled tools
+        if excluded_tools:
+            return mcp_type if route.operation_id not in excluded_tools else MCPType.EXCLUDE
+        if enabled_tools:
+            return mcp_type if route.operation_id in enabled_tools else MCPType.EXCLUDE
+            
+        return mcp_type
+
+    return route_map_fn
+
+
+# ===== OpenAPI Spec Operations =====
+def _clean_openapi_spec(spec: Dict[str, Any]) -> Dict[str, Any]:
     """Recursively clean OpenAPI spec:
     - Remove all callbacks
     - Remove all 4xx/5xx responses
     - Remove any field starting with 'x-'
     - Remove all path resources that start with 'x-'
     """
-    def _clean(obj):
+    cleaned_spec = copy.deepcopy(spec)
+    
+    def _clean(obj: Any) -> Any:
         if isinstance(obj, dict):
             # Remove 'callbacks' and 'x-' fields
             keys_to_remove = [k for k in obj if k == "callbacks" or k.startswith("x-")]
@@ -38,7 +141,8 @@ def clean_openapi_spec(spec: dict):
                 del obj[k]
             # Remove 4xx/5xx responses
             if "responses" in obj:
-                codes_to_remove = [code for code in obj["responses"] if code.startswith("4") or code.startswith("5")]
+                codes_to_remove = [code for code in obj["responses"] 
+                                 if str(code).startswith(("4", "5"))]
                 for code in codes_to_remove:
                     del obj["responses"][code]
             # Special handling for paths
@@ -54,77 +158,29 @@ def clean_openapi_spec(spec: dict):
                 _clean(item)
         return obj
 
-    return _clean(spec)
+    return _clean(cleaned_spec)
 
 
-def parse_cli_args(args=None):
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description="Bandwidth MCP Server")
-
-    # APIs
-    parser.add_argument(
-        "--apis",
-        help="Comma-separated list of API names to enable. If not specified, all tools are enabled.",
-        type=str,
-    )
-    parser.add_argument(
-        "--exclude-apis",
-        help="Comma-separated list of API names to disable.",
-        type=str,
-    )
-    # parser.add_argument(
-    #     "--list-tools",
-    #     help="List all available tools and exit.",
-    #     action="store_true",
-    # )
-
-    return parser.parse_known_args(args)[0]
-
-
-def get_enabled_apis():
-    """Get the list of enabled APIs from CLI args or environment variable."""
+async def fetch_openapi_spec(url: str) -> Dict[str, Any]:
+    """Fetch and parse OpenAPI spec from URL."""
     try:
-        args = parse_cli_args()
-
-        if args.apis:
-            return [api.strip() for api in args.apis.split(",")]
-    except:
-        pass
-
-    # Check for environment variable
-    env_apis = os.getenv("BW_MCP_APIS")
-    if env_apis:
-        return [api.strip() for api in env_apis.split(",")]
-
-    return None
-
-
-def get_excluded_apis():
-    """Get the list of excluded APIs from CLI args or environment variable."""
-    try:
-        args = parse_cli_args()
-
-        if args.exclude_apis:
-            return [api.strip() for api in args.exclude_apis.split(",")]
-    except:
-        pass
-
-    env_exclude_apis = os.getenv("BW_MCP_EXCLUDE_APIS")
-    if env_exclude_apis:
-        return [api.strip() for api in env_exclude_apis.split(",")]
-
-    return []
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            response.raise_for_status()
+            spec_text = response.text
+            
+        spec_object = yaml.safe_load(spec_text)
+        if not spec_object:
+            raise ValueError(f"Empty or invalid YAML spec from {url}")
+            
+        return _clean_openapi_spec(spec_object)
+    except httpx.HTTPError as e:
+        raise RuntimeError(f"Failed to fetch OpenAPI spec from {url}: {e}") from e
+    except yaml.YAMLError as e:
+        raise RuntimeError(f"Failed to parse YAML spec from {url}: {e}") from e
 
 
-def filter_apis(all_apis: list, enabled_apis: list | None, excluded_apis: list | None) -> list:
-    """Return the list of APIs after applying enabled and excluded filters."""
-    filtered = all_apis
-    if enabled_apis:
-        filtered = [api for api in all_apis if api in enabled_apis]
-        if not filtered:
-            raise ValueError("No valid APIs enabled. Please specify at least one valid API to enable.")
-    if excluded_apis:
-        filtered = [api for api in all_apis if api not in excluded_apis]
-        if not filtered:
-            raise ValueError("All valid APIs excluded. Please specify at least one valid API to include.")
-    return filtered
+def create_auth_header(username: str, password: str) -> str:
+    """Create a basic authentication header."""
+    auth_bytes = f"{username}:{password}".encode('utf-8')
+    return base64.b64encode(auth_bytes).decode('utf-8')

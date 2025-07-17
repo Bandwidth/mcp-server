@@ -1,25 +1,19 @@
 import asyncio
 
 from fastmcp import FastMCP
-
-from utils import get_enabled_apis, get_excluded_apis
-from resources import config_resource
 from servers import create_bandwidth_mcp
+from utils import get_enabled_tools, get_excluded_tools, print_server_info
 
 mcp = FastMCP(name="Bandwidth MCP")
 
 # Initialize the Bandwidth API client
 async def setup(mcp: FastMCP = mcp):
-    enabled_apis = get_enabled_apis()
-    excluded_apis = get_excluded_apis()
+    enabled_tools = get_enabled_tools()
+    excluded_tools = get_excluded_tools()
 
-    await create_bandwidth_mcp(
-        mcp,
-        enabled_apis,
-        excluded_apis
-    )
+    await create_bandwidth_mcp(mcp, enabled_tools, excluded_tools)
+    await print_server_info(mcp)
 
-mcp.add_resource(config_resource)
 
 if __name__ == "__main__":
     asyncio.run(setup())
