@@ -13,9 +13,10 @@ from typing import Dict, List, Optional, Any, Callable
 # ===== Config and Server Info =====
 load_dotenv()
 
-bandwidth_account_id = os.environ["BW_ACCOUNT_ID"]
-bandwidth_number = os.environ["BW_NUMBER"]
-bandwidth_messaging_application_id = os.environ["BW_MESSAGING_APPLICATION_ID"]
+bandwidth_account_id = os.environ.get("BW_ACCOUNT_ID", None)
+bandwidth_number = os.environ.get("BW_NUMBER", None)
+bandwidth_messaging_application_id = os.environ.get("BW_MESSAGING_APPLICATION_ID", None)
+bandwidth_voice_application_id = os.environ.get("BW_VOICE_APPLICATION_ID", None)
 username = os.environ["BW_USERNAME"]
 password = os.environ["BW_PASSWORD"].replace("\\", "")
 
@@ -26,6 +27,7 @@ def get_config() -> Dict[str, Any]:
         "bandwidth_account_id": bandwidth_account_id,
         "bandwidth_number": bandwidth_number,
         "bandwidth_messaging_application_id": bandwidth_messaging_application_id,
+        "bandwidth_voice_application_id": bandwidth_voice_application_id,
         "username": username,
         "password": password
     }

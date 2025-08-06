@@ -11,10 +11,14 @@ async def setup(mcp: FastMCP = mcp):
     enabled_tools = get_enabled_tools()
     excluded_tools = get_excluded_tools()
 
+    print("Setting up Bandwidth MCP server...")
     await create_bandwidth_mcp(mcp, enabled_tools, excluded_tools)
     await print_server_info(mcp)
 
-
-if __name__ == "__main__":
+def main():
+    """Main function to run the Bandwidth MCP server."""
     asyncio.run(setup())
     mcp.run()
+
+if __name__ == "__main__":
+    main()
