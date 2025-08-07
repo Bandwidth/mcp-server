@@ -1,15 +1,5 @@
 from typing import List
-from utils import get_config
-from fastmcp.resources import FunctionResource, HttpResource, Resource
-
-config_resource = FunctionResource(
-    name="Bandwidth API Configuration",
-    description="Configuration Object for Bandwidth API",
-    tags={"bandwidth", "config"},
-    uri="data://config",
-    mime_type="application/json",
-    fn=get_config,
-)
+from fastmcp.resources import HttpResource, Resource
 
 number_order_guide_resource = HttpResource(
     name="Bandwidth Number Order Guide",
@@ -22,4 +12,4 @@ number_order_guide_resource = HttpResource(
 
 def get_bandwidth_resources() -> List[Resource]:
     """Get all Bandwidth resources."""
-    return [config_resource, number_order_guide_resource]
+    return [number_order_guide_resource]

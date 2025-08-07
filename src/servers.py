@@ -1,12 +1,12 @@
 from fastmcp import FastMCP
 from httpx import AsyncClient
-from resources import get_bandwidth_resources
 from typing import Dict, List, Optional, Callable, Any
-from utils import (
-    get_config,
+from server_utils import (
+    add_resources,
     create_route_map_fn,
     create_auth_header,
-    fetch_openapi_spec
+    fetch_openapi_spec,
+    print_server_info
 )
 
 api_server_info: Dict[str, Dict[str, Any]] = {
@@ -27,7 +27,8 @@ api_server_info: Dict[str, Dict[str, Any]] = {
 
 async def _create_server(
     url: str,
-    route_map_fn: Optional[Callable] = None
+    route_map_fn: Optional[Callable] = None,
+    config: Dict[str, Any] = {}
 ) -> FastMCP:
     """Create an MCP server from the provided spec URL and credentials."""
     # Fetch and clean the OpenAPI spec
@@ -37,14 +38,14 @@ async def _create_server(
     if "servers" not in spec_object or not spec_object["servers"]:
         raise ValueError(f"OpenAPI spec from {url} has no servers defined")
     
-    config = get_config()
     base_url = spec_object["servers"][0]["url"]
-    auth_b64 = create_auth_header(config["username"], config["password"])
+    auth_b64 = create_auth_header(config["BW_USERNAME"], config["BW_PASSWORD"])
 
     client = AsyncClient(
         base_url=base_url,
         headers={
             "Authorization": f"Basic {auth_b64}",
+            "User-Agent": "Bandwidth MCP Server"
         }
     )
 
@@ -61,7 +62,8 @@ async def _create_server(
 async def create_bandwidth_mcp(
     mcp: FastMCP, 
     enabled_tools: Optional[List[str]], 
-    excluded_tools: Optional[List[str]]
+    excluded_tools: Optional[List[str]],
+    config: Dict[str, Any] = {}
 ) -> FastMCP:
     """Create the Bandwidth MCP server from all supplied APIs, taking into account enabled and excluded APIs.
     
@@ -69,6 +71,7 @@ async def create_bandwidth_mcp(
         mcp: The FastMCP instance to import servers into
         enabled_tools: List of tools to enable. If None, all tools are enabled.
         excluded_tools: List of tools to exclude. Takes priority over enabled_tools.
+        config: Configuration dictionary containing API credentials and other variables.
         
     Returns:
         The FastMCP instance with all API servers imported
@@ -82,16 +85,14 @@ async def create_bandwidth_mcp(
         try:
             server = await _create_server(
                 api_info["url"],
-                route_map_fn=route_map_fn
+                route_map_fn=route_map_fn,
+                config=config
             )
             await mcp.import_server(server)
         except Exception as e:
             print(f"Warning: Failed to create server for {api_name}: {e}")
 
-    for resource in get_bandwidth_resources():
-        try:
-            mcp.add_resource(resource)
-        except Exception as e:
-            print(f"Warning: Failed to import resource {resource.name}: {e}")
+    add_resources(mcp, config)
+    await print_server_info(mcp)
     
     return mcp

@@ -27,16 +27,12 @@ In order to use the Bandwidth MCP Server, you'll need the following things, set 
 
 #### Environment Variables
 
-Environment variables can be set one of three ways for usage with the Bandwidth MCP Server:
-
-1. System environment variables.
-2. `.env` file - The package includes the `python-dotenv` package to allow reading from dotenv files.
-3. Configured with your AI agent of choice - See our usage guides below.
+Environment variables are used to configure the Bandwidth MCP Server.
+The server will respect both system environment variables and those configured via your AI agent.
 
 The following variables will be required to use the server:
 
 ```sh
-BW_ACCOUNT_ID   # Your Bandwidth Account ID
 BW_USERNAME     # Your Bandwidth API User Username
 BW_PASSWORD     # Your Bandwidth API User Password
 ```
@@ -44,6 +40,7 @@ BW_PASSWORD     # Your Bandwidth API User Password
 The following variables are optional or conditionally required:
 
 ```sh
+BW_ACCOUNT_ID               # Your Bandwidth Account ID. Required for most API operations.
 BW_NUMBER                   # A valid phone number on your Bandwidth account. Used with our Messaging and MFA APIs.
 BW_MESSAGING_APPLICATION_ID # A Bandwidth Messaging Application ID. Used with our Messaging and MFA APIs.
 BW_VOICE_APPLICATION_ID     # A Bandwidth Voice Application ID. Used with our MFA API.
@@ -103,7 +100,6 @@ Below you'll find instructions for using our MCP server with different common AI
             "env": {
                 "BW_USERNAME": "<insert-bw-username>",
                 "BW_PASSWORD": "<insert-bw-password>",
-                "BW_ACCOUNT_ID": "<insert-bw-account-id>",
                 "BW_MCP_TOOLS": "tools,to,enable",
                 "BW_MCP_EXCLUDE_TOOLS": "tools,to,exclude",
             }
@@ -118,13 +114,13 @@ Below you'll find instructions for using our MCP server with different common AI
 ### Goose CLI
 
 1. Install [Goose CLI](https://block.github.io/goose/docs/getting-started/installation/)
-2. Add the Bandwidth MCP Server as an Extension
+2. Add the Bandwidth MCP Server as a Command-line Extension
 
 ```shell
 goose configure
 ```
 
-Then follow the prompts like the example below, making sure to add all of the relevant environment variables at the end.
+Then follow the prompts like the example below.
 
 ```shell
 ┌   goose-configure
@@ -141,6 +137,8 @@ Then follow the prompts like the example below, making sure to add all of the re
 ◇  What command should be run?
 │  uvx --from /path/to/bandwidth-mcp-server start
 ```
+
+> **_NOTE:_** If you configure environment variables with Goose, it will prioritize those over your system environment variables.
 
 ### Cursor
 
@@ -182,32 +180,32 @@ uvx --from ./ start
 ## Tools List
 
 ## **Multi-Factor Authentication (MFA)**
-- `bw-mcp-server__generateMessagingCode` - Send MFA code via SMS
-- `bw-mcp-server__generateVoiceCode` - Send MFA code via voice call
-- `bw-mcp-server__verifyCode` - Verify a previously sent MFA code
+- `generateMessagingCode` - Send MFA code via SMS
+- `generateVoiceCode` - Send MFA code via voice call
+- `verifyCode` - Verify a previously sent MFA code
 
 ## **Phone Number Lookup**
-- `bw-mcp-server__createLookup` - Create a phone number lookup request
-- `bw-mcp-server__getLookupStatus` - Get status of an existing lookup request
+- `createLookup` - Create a phone number lookup request
+- `getLookupStatus` - Get status of an existing lookup request
 
 ## **Voice & Call Management**
-- `bw-mcp-server__listCalls` - Returns a list of call events with filtering options
-- `bw-mcp-server__listCall` - Returns details for a single call event
+- `listCalls` - Returns a list of call events with filtering options
+- `listCall` - Returns details for a single call event
 
 ## **Reporting & Analytics**
-- `bw-mcp-server__getReports` - Get history of created reports
-- `bw-mcp-server__createReport` - Create a new report instance
-- `bw-mcp-server__getReportStatus` - Get status of a report
-- `bw-mcp-server__getReportFile` - Download report file
-- `bw-mcp-server__getReportDefinitions` - Get available report definitions
+- `getReports` - Get history of created reports
+- `createReport` - Create a new report instance
+- `getReportStatus` - Get status of a report
+- `getReportFile` - Download report file
+- `getReportDefinitions` - Get available report definitions
 
 ## **Media Management**
-- `bw-mcp-server__listMedia` - List your media files
-- `bw-mcp-server__getMedia` - Download a specific media file
-- `bw-mcp-server__uploadMedia` - Upload a media file
-- `bw-mcp-server__deleteMedia` - Delete a media file
+- `listMedia` - List your media files
+- `getMedia` - Download a specific media file
+- `uploadMedia` - Upload a media file
+- `deleteMedia` - Delete a media file
 
 ## **Messaging**
-- `bw-mcp-server__listMessages` - List messages with filtering options
-- `bw-mcp-server__createMessage` - Send SMS/MMS messages
-- `bw-mcp-server__createMultiChannelMessage` - Send multi-channel messages (RBM, SMS, MMS)
+- `listMessages` - List messages with filtering options
+- `createMessage` - Send SMS/MMS messages
+- `createMultiChannelMessage` - Send multi-channel messages (RBM, SMS, MMS)

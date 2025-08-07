@@ -1,36 +1,13 @@
-import os
 import copy
 import yaml
 import httpx
 import base64
 
 from fastmcp import FastMCP
-from dotenv import load_dotenv
-from argparse import ArgumentParser, Namespace
+from resources import get_bandwidth_resources
+from fastmcp.resources import FunctionResource
 from fastmcp.server.openapi import MCPType, HTTPRoute
 from typing import Dict, List, Optional, Any, Callable
-
-# ===== Config and Server Info =====
-load_dotenv()
-
-bandwidth_account_id = os.environ.get("BW_ACCOUNT_ID", None)
-bandwidth_number = os.environ.get("BW_NUMBER", None)
-bandwidth_messaging_application_id = os.environ.get("BW_MESSAGING_APPLICATION_ID", None)
-bandwidth_voice_application_id = os.environ.get("BW_VOICE_APPLICATION_ID", None)
-username = os.environ["BW_USERNAME"]
-password = os.environ["BW_PASSWORD"].replace("\\", "")
-
-
-def get_config() -> Dict[str, Any]:
-    """Get the Bandwidth configuration"""
-    return {
-        "bandwidth_account_id": bandwidth_account_id,
-        "bandwidth_number": bandwidth_number,
-        "bandwidth_messaging_application_id": bandwidth_messaging_application_id,
-        "bandwidth_voice_application_id": bandwidth_voice_application_id,
-        "username": username,
-        "password": password
-    }
 
 
 async def print_server_info(mcp: FastMCP) -> None:
@@ -51,59 +28,11 @@ async def print_server_info(mcp: FastMCP) -> None:
         print("Server may still be functional")
 
 
-# ===== Server Flags =====
-def _parse_cli_args(args: Optional[List[str]] = None) -> Namespace:
-    """Parse command line arguments with proper type hints."""
-    parser = ArgumentParser(description="Bandwidth MCP Server")
 
-    # Tools
-    parser.add_argument(
-        "--tools",
-        help="Comma-separated list of tool names to enable. If not specified, all tools are enabled.",
-        type=str,
-    )
-    parser.add_argument(
-        "--exclude-tools",
-        help="Comma-separated list of tool names to disable.",
-        type=str,
-    )
-
-    return parser.parse_known_args(args)[0]
-
-
-def _parse_arg_list(arg_string: str) -> List[str]:
-    """Parse a comma-separated argument string into a list."""
-    return [item.strip() for item in arg_string.split(",") if item.strip()]
-
-
-def _parse_flags(cli_arg: Optional[str], env_var: str) -> Optional[List[str]]:
-    """Get flag values from CLI argument or environment variable."""
-    # Try CLI argument first
-    if cli_arg:
-        return _parse_arg_list(cli_arg)
-    
-    # Fall back to environment variable
-    env_value = os.getenv(env_var)
-    if env_value:
-        return _parse_arg_list(env_value)
-    
-    return None
-
-
-# ===== Tool Management =====
-def get_enabled_tools() -> Optional[List[str]]:
-    """Get the list of enabled tools from CLI args or environment variable."""
-    args = _parse_cli_args()
-    return _parse_flags(args.tools, "BW_MCP_TOOLS")
-
-
-def get_excluded_tools() -> Optional[List[str]]:
-    """Get the list of excluded tools from CLI args or environment variable."""
-    args = _parse_cli_args()
-    return _parse_flags(args.exclude_tools, "BW_MCP_EXCLUDE_TOOLS")
-
-
-def create_route_map_fn(enabled_tools: Optional[List[str]], excluded_tools: Optional[List[str]]) -> Callable[[HTTPRoute, MCPType], MCPType]:
+def create_route_map_fn(
+    enabled_tools: Optional[List[str]], 
+    excluded_tools: Optional[List[str]]
+) -> Callable[[HTTPRoute, MCPType], MCPType]:
     """Create a route map function based on enabled and excluded tools.
     
     Args:
@@ -125,7 +54,6 @@ def create_route_map_fn(enabled_tools: Optional[List[str]], excluded_tools: Opti
     return route_map_fn
 
 
-# ===== OpenAPI Spec Operations =====
 def _clean_openapi_spec(spec: Dict[str, Any]) -> Dict[str, Any]:
     """Recursively clean OpenAPI spec:
     - Remove all callbacks
@@ -186,3 +114,28 @@ def create_auth_header(username: str, password: str) -> str:
     """Create a basic authentication header."""
     auth_bytes = f"{username}:{password}".encode('utf-8')
     return base64.b64encode(auth_bytes).decode('utf-8')
+
+
+def add_resources(mcp: FastMCP, config: Dict[str, Any]) -> FastMCP:
+    """Add configuration and other resources to the MCP server."""
+    config_resource = FunctionResource(
+        name="Bandwidth API Configuration",
+        description="Configuration Object for Bandwidth API",
+        tags={"bandwidth", "config"},
+        uri="data://config",
+        mime_type="application/json",
+        fn=lambda: config
+    )
+
+    try:
+        mcp.add_resource(config_resource)
+    except Exception as e:
+        print(f"Warning: Failed to add config resource: {e}")
+
+    for resource in get_bandwidth_resources():
+        try:
+            mcp.add_resource(resource)
+        except Exception as e:
+            print(f"Warning: Failed to import resource {resource.name}: {e}")
+
+    return mcp
