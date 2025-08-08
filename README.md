@@ -142,6 +142,26 @@ Then follow the prompts like the example below.
 
 ### Cursor
 
+1. Install [Cursor](https://cursor.com/downloads)
+2. Update your `.cursor/mcp.json` file to include the following object
+
+```json
+{
+    "mcpServers": {
+        "bw-mcp-server": {
+            "command": "/Users/ckoegel/Documents/repositories/sdks/bandwidth-mcp-server/.venv/bin/python",
+            "args": ["/Users/ckoegel/Documents/repositories/sdks/bandwidth-mcp-server/src/app.py"],
+            "env": {
+                "BW_USERNAME": "<insert-bw-username>",
+                "BW_PASSWORD": "<insert-bw-password>",
+                "BW_MCP_TOOLS": "tools,to,enable",
+                "BW_MCP_EXCLUDE_TOOLS": "tools,to,exclude",
+            }
+        }
+    }
+}
+```
+
 ### Running the Server Standalone
 
 The MCP server can be run locally using either native python or uv.

@@ -28,7 +28,6 @@ async def print_server_info(mcp: FastMCP) -> None:
         print("Server may still be functional")
 
 
-
 def create_route_map_fn(
     enabled_tools: Optional[List[str]], 
     excluded_tools: Optional[List[str]]
@@ -120,14 +119,15 @@ def add_resources(mcp: FastMCP, config: Dict[str, Any]) -> FastMCP:
     """Add configuration and other resources to the MCP server."""
     config_resource = FunctionResource(
         name="Bandwidth API Configuration",
-        description="Configuration Object for Bandwidth API",
-        tags={"bandwidth", "config"},
-        uri="data://config",
+        description="Object containing API credentials, application IDs, and account ID.",
+        tags={"bandwidth","config","credentials"},
+        uri="resource://config",
         mime_type="application/json",
         fn=lambda: config
     )
 
     try:
+        print("Adding configuration resource to MCP server...")
         mcp.add_resource(config_resource)
     except Exception as e:
         print(f"Warning: Failed to add config resource: {e}")
