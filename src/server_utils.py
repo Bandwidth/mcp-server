@@ -4,10 +4,11 @@ import httpx
 import base64
 
 from fastmcp import FastMCP
-from resources import get_bandwidth_resources
 from fastmcp.resources import FunctionResource
 from fastmcp.server.openapi import MCPType, HTTPRoute
 from typing import Dict, List, Optional, Any, Callable
+
+from .resources import get_bandwidth_resources
 
 
 async def print_server_info(mcp: FastMCP) -> None:

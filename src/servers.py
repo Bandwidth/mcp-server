@@ -1,7 +1,8 @@
 from fastmcp import FastMCP
 from httpx import AsyncClient
 from typing import Dict, List, Optional, Callable, Any
-from server_utils import (
+
+from .server_utils import (
     add_resources,
     create_route_map_fn,
     create_auth_header,
@@ -74,7 +75,7 @@ async def create_bandwidth_mcp(
         config: Configuration dictionary containing API credentials and other variables.
         
     Returns:
-        The FastMCP instance with all API servers imported
+        The FastMCP instance with all API servers imported and resources added.
         
     Raises:
         RuntimeError: If any API server fails to create or import

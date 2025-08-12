@@ -1,8 +1,9 @@
 import asyncio
 
 from fastmcp import FastMCP
-from servers import create_bandwidth_mcp
-from config import (
+
+from .servers import create_bandwidth_mcp
+from .config import (
     load_config,
     get_enabled_tools,
     get_excluded_tools
