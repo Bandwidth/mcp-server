@@ -13,38 +13,46 @@ from .resources import get_bandwidth_resources
 
 async def print_server_info(mcp: FastMCP) -> None:
     """Print concise server information."""
-    
+
     all_tools = await mcp.get_tools()
     all_resources = await mcp.get_resources()
-    
+
     tool_names = list(all_tools.keys())
     resource_names = [resource.name for resource in all_resources.values()]
 
     print("Bandwidth MCP Server Started")
-    print(f"Tools ({len(tool_names)}): {', '.join(sorted(tool_names)) if tool_names else 'None'}")
-    print(f"Resources ({len(resource_names)}): {', '.join(sorted(resource_names)) if resource_names else 'None'}")
+    print(
+        f"Tools ({len(tool_names)}): {', '.join(sorted(tool_names)) if tool_names else 'None'}"
+    )
+    print(
+        f"Resources ({len(resource_names)}): {', '.join(sorted(resource_names)) if resource_names else 'None'}"
+    )
 
 
 def create_route_map_fn(
-    enabled_tools: Optional[List[str]], 
-    excluded_tools: Optional[List[str]]
+    enabled_tools: Optional[List[str]], excluded_tools: Optional[List[str]]
 ) -> Callable[[HTTPRoute, MCPType], MCPType]:
     """Create a route map function based on enabled and excluded tools.
-    
+
     Args:
         enabled_tools: List of tools to enable. If None, all tools are enabled.
         excluded_tools: List of tools to exclude. Takes priority over enabled_tools.
-        
+
     Returns:
         A function that maps routes to MCP types based on the tool configuration.
     """
+
     def route_map_fn(route: HTTPRoute, mcp_type: MCPType) -> MCPType:
         # Excluded tools have priority - if provided, ignore enabled tools
         if excluded_tools:
-            return mcp_type if route.operation_id not in excluded_tools else MCPType.EXCLUDE
+            return (
+                mcp_type
+                if route.operation_id not in excluded_tools
+                else MCPType.EXCLUDE
+            )
         if enabled_tools:
             return mcp_type if route.operation_id in enabled_tools else MCPType.EXCLUDE
-            
+
         return mcp_type
 
     return route_map_fn
@@ -58,7 +66,7 @@ def _clean_openapi_spec(spec: Dict[str, Any]) -> Dict[str, Any]:
     - Remove all path resources that start with 'x-'
     """
     cleaned_spec = copy.deepcopy(spec)
-    
+
     def _clean(obj: Any) -> Any:
         if isinstance(obj, dict):
             # Remove 'callbacks' and 'x-' fields
@@ -67,8 +75,11 @@ def _clean_openapi_spec(spec: Dict[str, Any]) -> Dict[str, Any]:
                 del obj[k]
             # Remove 4xx/5xx responses
             if "responses" in obj:
-                codes_to_remove = [code for code in obj["responses"] 
-                                 if str(code).startswith(("4", "5"))]
+                codes_to_remove = [
+                    code
+                    for code in obj["responses"]
+                    if str(code).startswith(("4", "5"))
+                ]
                 for code in codes_to_remove:
                     del obj["responses"][code]
             # Special handling for paths
@@ -94,11 +105,11 @@ async def fetch_openapi_spec(url: str) -> Dict[str, Any]:
             response = await client.get(url)
             response.raise_for_status()
             spec_text = response.text
-            
+
         spec_object = yaml.safe_load(spec_text)
         if not spec_object:
             raise ValueError(f"Empty or invalid YAML spec from {url}")
-            
+
         return _clean_openapi_spec(spec_object)
     except httpx.HTTPError as e:
         raise RuntimeError(f"Failed to fetch OpenAPI spec from {url}: {e}") from e
@@ -108,8 +119,8 @@ async def fetch_openapi_spec(url: str) -> Dict[str, Any]:
 
 def create_auth_header(username: str, password: str) -> str:
     """Create a basic authentication header."""
-    auth_bytes = f"{username}:{password}".encode('utf-8')
-    return base64.b64encode(auth_bytes).decode('utf-8')
+    auth_bytes = f"{username}:{password}".encode("utf-8")
+    return base64.b64encode(auth_bytes).decode("utf-8")
 
 
 def add_resources(mcp: FastMCP, config: Dict[str, Any]) -> FastMCP:
@@ -117,10 +128,10 @@ def add_resources(mcp: FastMCP, config: Dict[str, Any]) -> FastMCP:
     config_resource = FunctionResource(
         name="Bandwidth API Configuration",
         description="Object containing API credentials, application IDs, and account ID.",
-        tags={"bandwidth","config","credentials"},
+        tags={"bandwidth", "config", "credentials"},
         uri="resource://config",
         mime_type="application/json",
-        fn=lambda: config
+        fn=lambda: config,
     )
 
     mcp.add_resource(config_resource)

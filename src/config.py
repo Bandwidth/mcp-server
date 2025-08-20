@@ -1,5 +1,4 @@
 import os
-
 from typing import Dict, List, Optional
 from argparse import ArgumentParser, Namespace
 
@@ -8,8 +7,13 @@ def load_config() -> Dict[str, str]:
     """Load Bandwidth configuration from environment variables."""
     config = {}
     required_vars = ["BW_USERNAME", "BW_PASSWORD"]
-    optional_vars = ["BW_ACCOUNT_ID", "BW_NUMBER", "BW_MESSAGING_APPLICATION_ID", "BW_VOICE_APPLICATION_ID"]
-    
+    optional_vars = [
+        "BW_ACCOUNT_ID",
+        "BW_NUMBER",
+        "BW_MESSAGING_APPLICATION_ID",
+        "BW_VOICE_APPLICATION_ID",
+    ]
+
     # Required variables
     for var in required_vars:
         if var not in os.environ:
@@ -20,7 +24,7 @@ def load_config() -> Dict[str, str]:
         value = os.getenv(var)
         if value:
             config[var] = value
-    
+
     return config
 
 
@@ -53,12 +57,12 @@ def _parse_flags(cli_arg: Optional[str], env_var: str) -> Optional[List[str]]:
     # Try CLI argument first
     if cli_arg:
         return _parse_arg_list(cli_arg)
-    
+
     # Fall back to environment variable
     env_value = os.getenv(env_var)
     if env_value:
         return _parse_arg_list(env_value)
-    
+
     return None
 
 
