@@ -13,20 +13,16 @@ from .resources import get_bandwidth_resources
 
 async def print_server_info(mcp: FastMCP) -> None:
     """Print concise server information."""
-    try:
-        all_tools = await mcp.get_tools()
-        all_resources = await mcp.get_resources()
-        
-        tool_names = list(all_tools.keys())
-        resource_names = [resource.name for resource in all_resources.values()]
+    
+    all_tools = await mcp.get_tools()
+    all_resources = await mcp.get_resources()
+    
+    tool_names = list(all_tools.keys())
+    resource_names = [resource.name for resource in all_resources.values()]
 
-        print("Bandwidth MCP Server Started")
-        print(f"Tools ({len(tool_names)}): {', '.join(sorted(tool_names)) if tool_names else 'None'}")
-        print(f"Resources ({len(resource_names)}): {', '.join(sorted(resource_names)) if resource_names else 'None'}")
-        
-    except Exception as e:
-        print(f"Error retrieving server info: {e}")
-        print("Server may still be functional")
+    print("Bandwidth MCP Server Started")
+    print(f"Tools ({len(tool_names)}): {', '.join(sorted(tool_names)) if tool_names else 'None'}")
+    print(f"Resources ({len(resource_names)}): {', '.join(sorted(resource_names)) if resource_names else 'None'}")
 
 
 def create_route_map_fn(
@@ -127,11 +123,7 @@ def add_resources(mcp: FastMCP, config: Dict[str, Any]) -> FastMCP:
         fn=lambda: config
     )
 
-    try:
-        print("Adding configuration resource to MCP server...")
-        mcp.add_resource(config_resource)
-    except Exception as e:
-        print(f"Warning: Failed to add config resource: {e}")
+    mcp.add_resource(config_resource)
 
     for resource in get_bandwidth_resources():
         try:
