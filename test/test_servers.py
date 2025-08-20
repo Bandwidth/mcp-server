@@ -1,5 +1,7 @@
 import pytest
 from fastmcp import FastMCP
+from pytest_httpx import HTTPXMock
+from test.utils import create_mock
 from src.servers import create_bandwidth_mcp, _create_server
 
 async def create_mcp_server(name=None, tools=None, excluded_tools=None):
@@ -26,20 +28,22 @@ def calculate_expected_tools(tools, excluded_tools, total_tools=19):
 server_configuration_list = [
     ([], []),
     ([], ["getReports", "createReport"]),
-    (["createMessage"], []),
-    (["generateMessagingCode", "generateVoiceCode"], []),
-    (["createLookup", "getLookupStatus", "createMessage"], ["listCalls"]),
+    (["getReports", "createReport"], []),
+    (["uploadMedia", "deleteMedia", "getMedia"], ["listMedia"]),
     (["listMedia"], ["uploadMedia", "deleteMedia", "getMedia"]),
 ]
 
-@pytest.mark.skip
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("tools, excluded_tools", server_configuration_list)
-async def test_full_mcp_server_creation(tools, excluded_tools):
+async def test_full_mcp_server_creation(tools, excluded_tools, httpx_mock: HTTPXMock):
     """Test that the MCP server is created correctly with included and excluded tools."""
 
     expected_tools = calculate_expected_tools(tools, excluded_tools)
     name = f"Test MCP with {expected_tools} Tools"
+
+    for name in ["messaging", "multi-factor-auth", "phone-number-lookup", "insights"]:
+        create_mock(httpx_mock, name)
     
     mcp = await create_mcp_server(name, tools, excluded_tools)
     mcp_tools = await mcp.get_tools()
@@ -104,3 +108,13 @@ async def test_individual_mcp_server_creation(
         f"Expected base URL '{expected_base_url}', got '{server_client.base_url}'"
     assert server_client.headers["Authorization"] == expected_auth_header, \
         f"Expected auth header '{expected_auth_header}', got '{server_client.headers['Authorization']}'"
+
+
+@pytest.mark.asyncio
+async def test_create_server_no_servers_defined(httpx_mock: HTTPXMock):
+    """Test that creating a server with no servers defined raises an error."""
+    
+    create_mock(httpx_mock, "no-servers")
+    
+    with pytest.raises(ValueError, match="has no servers defined"):
+        await _create_server("https://dev.bandwidth.com/spec/no-servers.yml")
