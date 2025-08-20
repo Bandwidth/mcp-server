@@ -9,14 +9,14 @@ async def test_fetch_openapi_spec_valid(httpx_mock: HTTPXMock):
     """Test that the OpenAPI spec can be fetched and parsed correctly."""
 
     create_mock(httpx_mock, "insights")
-    
+
     spec = await fetch_openapi_spec("https://dev.bandwidth.com/spec/insights.yml")
-    
+
     assert isinstance(spec, dict), "Fetched spec should be a dictionary"
     assert "openapi" in spec, "Spec should contain 'openapi' key"
     assert "info" in spec, "Spec should contain 'info' key"
     assert "paths" in spec, "Spec should contain 'paths' key"
-    
+
 
 @pytest.mark.asyncio
 async def test_fetch_openapi_spec_empty_yaml(httpx_mock: HTTPXMock):
@@ -25,7 +25,7 @@ async def test_fetch_openapi_spec_empty_yaml(httpx_mock: HTTPXMock):
     with pytest.raises(ValueError):
         await fetch_openapi_spec("https://dev.bandwidth.com/spec/empty.yml")
 
-        
+
 @pytest.mark.asyncio
 async def test_fetch_openapi_spec_http_error():
     """Test that fetching an invalid URL raises an HTTP error."""
