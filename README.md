@@ -60,6 +60,9 @@ The `BW_MCP_TOOLS` and `BW_MCP_EXCLUDE_TOOLS` mentioned in the [Environment Vari
 section allow for enabling and excluding tools by name. You can also use the CLI flags `--tools` and `--exclude-tools`.
 Using the CLI flags will take priority over the environment variables, and providing tools to exclude will take priority over the list of enabled tools.
 
+For a more comprehensive list of common use cases when which tools are required for each, check out our
+[Common Use Cases Guide](common_use_cases.md)
+
 ##### Tool Filtering Examples
 
 **Including only our Messaging tools**
