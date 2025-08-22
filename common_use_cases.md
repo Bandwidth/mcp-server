@@ -11,6 +11,8 @@ If you're looking to send messages using the MCP server, we recommend enabling t
 - `createMessage` - Send SMS or MMS messages
 - `createMultiChannelMessage` - Send multi-channel messages (mostly for RBM messaging)
 
+Sending messages requires `BW_ACCOUNT_ID`, `BW_MESSAGING_APPLICATION_ID`, and `BW_NUMBER` to be set in your environment variables.
+
 **Enabling these tools**
 ```sh
 # Environment Variable
@@ -28,6 +30,8 @@ Most agents we've experimented with have been smart enough to figure out that yo
 need to both create a lookup request and then get its' status to actually get the TN info,
 and enabling only these two tools is a good way to help your agent remember that!
 
+Phone Number Lookup requires the `BW_ACCOUNT_ID` environment variable to be set.
+
 **Enabling these tools**
 ```sh
 # Environment Variable
@@ -43,6 +47,9 @@ To create and verify multi-factor authentication codes, you'll need our three MF
 - `generateMessagingCode` - Used to generate and send an MFA code via SMS
 - `generateVoiceCode` - Use to generate and send an MFA code via a phone call
 - `verifyCode` - Verify an MFA code sent with one of the previous tools
+
+Generating Messaging and Voice codes requires the `BW_MESSAGING_APPLICATION_ID` and `BW_VOICE_APPLICATION_ID` environment variables respectively.
+Both of these tools also require `BW_ACCOUNT_ID` and `BW_NUMBER`.
 
 **Enabling these tools**
 ```sh
