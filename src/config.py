@@ -14,17 +14,17 @@ def load_config() -> Dict[str, str]:
         "BW_VOICE_APPLICATION_ID",
     ]
 
-    # Required variables
-    for var in required_vars:
-        if var not in os.environ:
-            raise ValueError(f"Missing required environment variable: {var}")
-
     # Add all variables that exist
     for var in required_vars + optional_vars:
         value = os.getenv(var)
         if value:
             config[var] = value
 
+    # Required variables
+    for var in required_vars:
+        if var not in config.keys():
+            raise ValueError(f"Missing required environment variable: {var}")
+        
     return config
 
 
