@@ -1,6 +1,6 @@
 import pytest
 from pytest_httpx import HTTPXMock
-from test.utils import create_mock
+from utils import create_mock
 from src.server_utils import fetch_openapi_spec
 
 

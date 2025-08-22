@@ -2,7 +2,7 @@ from fastmcp import FastMCP
 from httpx import AsyncClient
 from typing import Dict, List, Optional, Callable, Any
 
-from .server_utils import (
+from server_utils import (
     add_resources,
     create_route_map_fn,
     create_auth_header,

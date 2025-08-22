@@ -1,7 +1,7 @@
 import pytest
 from fastmcp import FastMCP
 from pytest_httpx import HTTPXMock
-from test.utils import create_mock
+from utils import create_mock
 from src.servers import create_bandwidth_mcp, _create_server
 
 
