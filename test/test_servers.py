@@ -17,7 +17,7 @@ async def create_mcp_server(name=None, tools=None, excluded_tools=None):
     return mcp
 
 
-def calculate_expected_tools(tools, excluded_tools, total_tools=19):
+def calculate_expected_tools(tools, excluded_tools, total_tools=46):
     if tools and not excluded_tools:
         return len(tools)
     elif excluded_tools:
@@ -43,7 +43,7 @@ async def test_full_mcp_server_creation(tools, excluded_tools, httpx_mock: HTTPX
     expected_tools = calculate_expected_tools(tools, excluded_tools)
     name = f"Test MCP with {expected_tools} Tools"
 
-    for name in ["messaging", "multi-factor-auth", "phone-number-lookup", "insights"]:
+    for name in ["messaging", "multi-factor-auth", "phone-number-lookup", "insights", "end-user-management"]:
         create_mock(httpx_mock, name)
 
     mcp = await create_mcp_server(name, tools, excluded_tools)
