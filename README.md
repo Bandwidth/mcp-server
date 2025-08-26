@@ -41,7 +41,7 @@ The following variables are optional or conditionally required:
 
 ```sh
 BW_ACCOUNT_ID               # Your Bandwidth Account ID. Required for most API operations.
-BW_NUMBER                   # A valid phone number on your Bandwidth account. Used with our Messaging and MFA APIs.
+BW_NUMBER                   # A valid phone number on your Bandwidth account. Used with our Messaging and MFA APIs. Must be in E164 format.
 BW_MESSAGING_APPLICATION_ID # A Bandwidth Messaging Application ID. Used with our Messaging and MFA APIs.
 BW_VOICE_APPLICATION_ID     # A Bandwidth Voice Application ID. Used with our MFA API.
 BW_MCP_TOOLS                # The list of MCP tools you'd like to enable. If not set, all tools are enabled.
@@ -89,34 +89,10 @@ BW_MCP_EXCLUDE_TOOLS=createLookup,getLookupStatus
 
 Below you'll find instructions for using our MCP server with different common AI agents, as well as instructions for running the server locally. For usage with AI agents, it is recommended to use a combination of [uv](https://github.com/astral-sh/uv?tab=readme-ov-file#uv) and environment variables to start and configure the server respectively.
 
-### Claude Desktop
-
-1. Install [Claude Desktop](https://claude.ai/download)
-2. Edit your `claude_desktop_config.json` to include the following object
-
-```json
-{
-    "mcpServers": {
-        "Bandwidth": {
-            "command": "uvx",
-            "args": ["--from", "/path/to/bandwidth-mcp-server", "start"],
-            "env": {
-                "BW_USERNAME": "<insert-bw-username>",
-                "BW_PASSWORD": "<insert-bw-password>",
-                "BW_MCP_TOOLS": "tools,to,enable",
-                "BW_MCP_EXCLUDE_TOOLS": "tools,to,exclude",
-            }
-        }
-    }
-}
-```
-
-> **_NOTE:_**  You can also run the server directly from our github repo by replacing
-`/path/to/bandwidth-mcp-server` with: `git+https://github.com/Bandwidth/bandwidth-mcp-server.git`
-
 ### Goose CLI
 
 1. Install [Goose CLI](https://block.github.io/goose/docs/getting-started/installation/)
+    - We recommend configuring Goose to use `Allow Mode`. This will require user approval before Goose calls tools, which could prevent Goose from accidentally taking unwanted actions.
 2. Add the Bandwidth MCP Server as a Command-line Extension
 
 ```shell
@@ -165,9 +141,37 @@ Then follow the prompts like the example below.
 }
 ```
 
+### Claude Desktop
+
+1. Install [Claude Desktop](https://claude.ai/download)
+2. Edit your `claude_desktop_config.json` to include the following object
+
+```json
+{
+    "mcpServers": {
+        "Bandwidth": {
+            "command": "uvx",
+            "args": ["--from", "/path/to/bandwidth-mcp-server", "start"],
+            "env": {
+                "BW_USERNAME": "<insert-bw-username>",
+                "BW_PASSWORD": "<insert-bw-password>",
+                "BW_MCP_TOOLS": "tools,to,enable",
+                "BW_MCP_EXCLUDE_TOOLS": "tools,to,exclude",
+            }
+        }
+    }
+}
+```
+
+> **_NOTE:_** You can also run the server directly from our github repo by replacing
+`/path/to/bandwidth-mcp-server` with: `git+https://github.com/Bandwidth/bandwidth-mcp-server.git`
+
+> **_NOTE:_** We've noticed some issues with Claude not being able to see MCP resources. This could require you to enter some tool parameters normally included in our config resource manually.
+
 ### Running the Server Standalone
 
 The MCP server can be run locally using either native python or uv.
+When running this way, all environment variables MUST be set in your system environment.
 
 #### Run Using Native Python
 
@@ -232,3 +236,34 @@ uvx --from ./ start
 - `listMessages` - List messages with filtering options
 - `createMessage` - Send SMS/MMS messages
 - `createMultiChannelMessage` - Send multi-channel messages (RBM, SMS, MMS)
+
+## **Address Management**
+- `getAddressFields` - Get supported address fields by country
+- `validateAddress` - Validate an address and get excluded features
+- `listAddresses` - List all addresses
+- `createAddress` - Create an address
+- `getAddress` - Get an address by ID
+- `updateAddress` - Update an address
+- `listCityInfo` - List city info search results
+
+## **Compliance & Requirements**
+- `listDocumentTypes` - List all accepted document types and metadata requirements
+- `listEndUserTypes` - List all End user types and accepted metadata
+- `listEndUserActivationRequirements` - List requirements for End user activation
+- `getComplianceDocumentMetadata` - Get metadata of uploaded documents
+- `updateComplianceDocument` - Modify document data and file
+- `downloadComplianceDocuments` - Download document using document ID
+- `createComplianceDocument` - Upload a document with metadata
+- `listComplianceEndUsers` - List all End users of an account
+- `createComplianceEndUser` - Create an End user
+- `getComplianceEndUser` - Retrieve an End User by ID
+- `updateComplianceEndUser` - Update End user details
+- `listRequirementsPackages` - List all requirements packages
+- `createRequirementsPackage` - Create a requirements package
+- `getRequirementsPackage` - Retrieve a requirements package
+- `patchRequirementsPackage` - Update Requirements package
+- `getRequirementsPackageAssets` - Get assets attached to requirements package
+- `attachRequirementsPackageAsset` - Attach an asset to requirements package
+- `detachRequirementsPackageAsset` - Detach an asset from requirements package
+- `validateNumberActivation` - Validate number activation requirements
+- `getRequirementsPackageHistory` - Get history of a requirements package
