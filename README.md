@@ -166,7 +166,7 @@ Then follow the prompts like the example below.
 > **_NOTE:_** You can also run the server directly from our github repo by replacing
 `/path/to/bandwidth-mcp-server` with: `git+https://github.com/Bandwidth/bandwidth-mcp-server.git`
 
-> **_NOTE:_** We've noticed some issues with Claude not being able to see MCP resources. This could require you to enter some tool parameters normally included in our config resource manually.
+> **_NOTE:_** We've noticed some issues with Claude not being able to see MCP resources. This could require you to manually enter some tool parameters normally included in our config resource.
 
 ### Running the Server Standalone
 
