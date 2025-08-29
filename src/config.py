@@ -24,7 +24,7 @@ def load_config() -> Dict[str, str]:
     for var in required_vars:
         if var not in config.keys():
             raise ValueError(f"Missing required environment variable: {var}")
-        
+
     return config
 
 

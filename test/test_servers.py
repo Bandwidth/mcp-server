@@ -43,7 +43,13 @@ async def test_full_mcp_server_creation(tools, excluded_tools, httpx_mock: HTTPX
     expected_tools = calculate_expected_tools(tools, excluded_tools)
     name = f"Test MCP with {expected_tools} Tools"
 
-    for name in ["messaging", "multi-factor-auth", "phone-number-lookup", "insights", "end-user-management"]:
+    for name in [
+        "messaging",
+        "multi-factor-auth",
+        "phone-number-lookup",
+        "insights",
+        "end-user-management",
+    ]:
         create_mock(httpx_mock, name)
 
     mcp = await create_mcp_server(name, tools, excluded_tools)
