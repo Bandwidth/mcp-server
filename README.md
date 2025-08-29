@@ -128,8 +128,8 @@ Then follow the prompts like the example below.
 {
     "mcpServers": {
         "bw-mcp-server": {
-            "command": "/Users/ckoegel/Documents/repositories/sdks/bandwidth-mcp-server/.venv/bin/python",
-            "args": ["/Users/ckoegel/Documents/repositories/sdks/bandwidth-mcp-server/src/app.py"],
+            "command":"uvx",
+            "args": ["--from", "/path/to/bandwidth-mcp-server", "start"],
             "env": {
                 "BW_USERNAME": "<insert-bw-username>",
                 "BW_PASSWORD": "<insert-bw-password>",
@@ -140,6 +140,39 @@ Then follow the prompts like the example below.
     }
 }
 ```
+
+### VSCode (Copilot)
+
+1. Within VSCode, open the Command Palette and search for `MCP: Add Server`.
+2. Choose `Command (stdio)`, then enter the full command to start the server. (Example Below)
+
+```shell
+uvx --from /path/to/bandwidth-mcp-server start
+```
+
+3. Choose a name for the server (ie. `bw-mcp-server`) and select if you'd like it to be enabled Globally or only in the current workspace.
+4. You can configure environment variables by opening the `mcp.json` file VSCode provides like the example below.
+
+```json
+{
+    "servers": {
+        "bw-mcp-server": {
+            "type": "stdio",
+            "command": "uvx",
+            "args": ["--from", "/path/to/bandwidth-mcp-server", "start"],
+            "env": {
+                "BW_USERNAME": "<insert-bw-username>",
+                "BW_PASSWORD": "<insert-bw-password>",
+                "BW_MCP_TOOLS": "tools,to,enable",
+                "BW_MCP_EXCLUDE_TOOLS": "tools,to,exclude",
+            }
+        }
+    },
+    "inputs": []
+}
+```
+
+> **_NOTE:_** You may need to make sure MCP servers are enabled in VSCode to begin using the server. See the [official guide](https://code.visualstudio.com/docs/copilot/customization/mcp-servers) for more info.
 
 ### Claude Desktop
 
@@ -246,7 +279,7 @@ uvx --from ./ start
 - `updateAddress` - Update an address
 - `listCityInfo` - List city info search results
 
-## **Compliance & Requirements**
+## **Compliance**
 - `listDocumentTypes` - List all accepted document types and metadata requirements
 - `listEndUserTypes` - List all End user types and accepted metadata
 - `listEndUserActivationRequirements` - List requirements for End user activation
@@ -258,6 +291,8 @@ uvx --from ./ start
 - `createComplianceEndUser` - Create an End user
 - `getComplianceEndUser` - Retrieve an End User by ID
 - `updateComplianceEndUser` - Update End user details
+
+## **Requirements Packages**
 - `listRequirementsPackages` - List all requirements packages
 - `createRequirementsPackage` - Create a requirements package
 - `getRequirementsPackage` - Retrieve a requirements package

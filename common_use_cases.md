@@ -59,3 +59,32 @@ BW_MCP_TOOLS=generateMessagingCode,generateVoiceCode,verifyCode
 # CLI Flag
 --tools generateMessagingCode,generateVoiceCode,verifyCode
 ```
+
+## Adding a Business End User
+
+To add an end user, you'll need three specific Compliance endpoints.
+- `listEndUserTypes` - Used to list all End user types and their required fields
+- `listEndUserActivationRequirements` - Required if the end user will be used for requirements packages
+- `createComplianceEndUser` - Used to create the end user
+
+These tools will require the `BW_ACCOUNT_ID` environment variable.
+
+**Enabling these tools**
+```sh
+# Environment Variable
+BW_MCP_TOOLS=listEndUserTypes,listEndUserActivationRequirements,createComplianceEndUser
+# CLI Flag
+--tools listEndUserTypes,listEndUserActivationRequirements,createComplianceEndUser
+```
+
+## Address Validation
+
+Validating an address can be done with just the `validateAddress` tool and the `BW_ACCOUNT_ID` environment variable!
+
+**Enabling this tool**
+```sh
+# Environment Variable
+BW_MCP_TOOLS=validateAddress
+# CLI Flag
+--tools validateAddress
+```
