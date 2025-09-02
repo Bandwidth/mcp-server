@@ -1,0 +1,3079 @@
+openapi: 3.1.0
+info:
+  title: End User Management
+  description: |-
+    Bandwidth's End User Management API allows you to manage addresses,
+    validate them, and handle compliance requirements for end users.
+
+      - Addresses Management
+      - Compliance
+      - Requirements Packages
+  version: 1.0.0
+  contact:
+    name: Bandwidth
+    url: https://support.bandwidth.com
+    email: support@bandwidth.com
+  termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
+servers:
+  - url: https://api.bandwidth.com/api/v2
+    description: Production
+
+paths:
+  /addresses/fields/{countryCodeA3}:
+    get:
+      summary: Get Address Fields
+      operationId: getAddressFields
+      description: Get a list of address fields that is supported as per the country and feature specific requirements.
+      tags:
+        - Addresses
+      parameters:
+        - $ref: "#/components/parameters/countryCodeA3PathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/getAddressFieldsResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/addresses/validator:
+    post:
+      summary: Validate Address
+      operationId: validateAddress
+      description: Returns features that will NOT work for the entered address. Please note that independent features/services may have additional validation and absence from excludedFeatures does not guarantee that the address will be valid for the feature/service.
+      tags:
+        - Addresses
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/validateAddressRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/validateAddressResponse"
+        "400":
+          $ref: "#/components/responses/validateAddressBadRequestResponse"
+        "401":
+          $ref: "#/components/responses/unauthorizedError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/addresses:
+    get:
+      summary: List Addresses
+      operationId: listAddresses
+      description: List all addresses. The results are sorted by last updated time in reverse chronological order by default without any query filters.
+      tags:
+        - Addresses
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/addressCustomReferenceQueryParamEqStartsWithContains"
+        - $ref: "#/components/parameters/countryCodeA3QueryParamEq"
+        - $ref: "#/components/parameters/cityQueryParamEqStartsWith"
+        - $ref: "#/components/parameters/postalCodeQueryParamEqStartsWithContains"
+        - $ref: "#/components/parameters/geoValidationStatusQueryParamEq"
+        - $ref: "#/components/parameters/addressFieldsQueryParamContains"
+        - $ref: "#/components/parameters/afterCursorQueryParam"
+        - $ref: "#/components/parameters/limitQueryParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/listAddressesResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+    post:
+      summary: Create Address
+      operationId: createAddress
+      description: Create an address. Use GET /addresses/fields for full list of country specific address fields.
+      tags:
+        - Addresses
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/createAddressRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/createAddressResponse"
+        "400":
+          $ref: "#/components/responses/createAddressBadRequestResponse"
+        "401":
+          $ref: "#/components/responses/unauthorizedError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/addresses/{addressId}:
+    get:
+      summary: Get Address
+      operationId: getAddress
+      description: Get an address.
+      tags:
+        - Addresses
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/addressIdPathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/getAddressResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+    patch:
+      summary: Update Address
+      operationId: updateAddress
+      description: Update an address. Use GET /addresses/fields for full list of country specific address fields that can be updated.
+      tags:
+        - Addresses
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/addressIdPathParam"
+      requestBody:
+        $ref: "#/components/requestBodies/updateAddressRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/updateAddressResponse"
+        "400":
+          $ref: "#/components/responses/updateAddressBadRequestResponse"
+        "401":
+          $ref: "#/components/responses/unauthorizedError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /addresses/{countryCodeA3}/cityInfo:
+    get:
+      summary: List City Info
+      operationId: listCityInfo
+      description: |
+        List city info search results.
+
+        Allowed search parameter combinations:
+        * city[startsWith]=Aalen
+        * postalCode[startsWith]=734
+        * city[eq]=Aalen&postalCode[startsWith]=734
+      tags:
+        - Addresses
+      parameters:
+        - $ref: "#/components/parameters/cityInfoCountryCodeA3PathParam"
+        - $ref: "#/components/parameters/cityInfoCityQueryParamEqStartsWith"
+        - $ref: "#/components/parameters/cityInfoPostalCodeQueryParamStartsWith"
+      responses:
+        "200":
+          $ref: "#/components/responses/listCityInfoResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /compliance/documentTypes:
+    get:
+      summary: List Document Types
+      operationId: listDocumentTypes
+      description: |
+        List of all accepted document types and their metadata requirements.
+        When <a href='/apis/numbers/v2/#tag/Compliance/operation/addComplianceDocument'>adding a document</a>,
+        the 'fields' properties indicated as required are mandatory.
+      tags:
+        - Compliance
+      responses:
+        "200":
+          $ref: "#/components/responses/listDocumentTypesResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /compliance/endUserTypes:
+    get:
+      summary: List End User Types
+      operationId: listEndUserTypes
+      description: |
+        List of all End user types and the accepted metadata information.
+        When <a href='/apis/numbers/v2/#tag/Compliance/operation/createComplianceEndUser'>creating an End user</a>,
+        the 'fields' properties indicated as required are mandatory.
+      tags:
+        - Compliance
+      responses:
+        "200":
+          $ref: "#/components/responses/listEndUserTypesResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/requirements:
+    get:
+      summary: List End User Activation Requirements
+      operationId: listEndUserActivationRequirements
+      description: |
+        Lists all requirements required to validate an End user and activate services.
+        Requirements are set by - country, phone number type and End user type.
+
+        The fields mentioned above can also be used in a hierarchical manner to search for requirements.
+        This means that the country field is mandatory when filtering based on phone number type, and similarly,
+        both country and phone number type fields are mandatory when filtering for End user type.
+
+        Note: The 'fields' properties in End user requirements and accepted documents indicated as
+        required are mandatory to provide in the attached End user and document type assets before
+        submitting a requirement package.
+
+        Explore all available fields for End user using
+        <a href='/apis/numbers/v2/#tag/Compliance/operation/listEndUserTypes'>list End user types</a>
+        and for document using <a href='/apis/numbers/v2/#tag/Compliance/operation/listDocumentTypes'>list document types</a>.
+      tags:
+        - Compliance
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/countryCodeA3QueryParamEq"
+        - $ref: "#/components/parameters/phoneNumberTypeQueryParamEq"
+        - $ref: "#/components/parameters/rpEndUserTypeQueryParamEq"
+      responses:
+        "200":
+          $ref: "#/components/responses/listRequirementsResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/documents/{documentId}:
+    get:
+      summary: Get Compliance Document Metadata
+      operationId: getComplianceDocumentMetadata
+      description: Get all the metadata details of the uploaded document.
+      tags:
+        - Compliance
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/documentIdPathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/getComplianceDocumentResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+    patch:
+      summary: Update Compliance Document Metadata and Files
+      operationId: updateComplianceDocument
+      description: Modify document data and file. Updates are only allowed in `DRAFT` and `VERIFICATION_FAILED` state.
+      tags:
+        - Compliance
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/documentIdPathParam"
+      requestBody:
+        $ref: "#/components/requestBodies/updateComplianceDocumentRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/getComplianceDocumentResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/documents/{documentId}/fileContent:
+    get:
+      summary: Download Compliance Document
+      operationId: downloadComplianceDocuments
+      description: |
+        Download document using the document id.
+        Download will fail if 'fileContentExists' from get document metadata is false.
+      tags:
+        - Compliance
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/documentIdPathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/downloadDocumentResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/documents:
+    post:
+      summary: Create Compliance Document
+      operationId: createComplianceDocument
+      description: |
+        Upload a document with metadata as part of any compliance requirements.
+        One document can be used only in one requirement package.
+        To successfully create a document, please provide all the mandatory fields
+        marked in <a href='/apis/numbers/v2/#tag/Compliance/operation/listDocumentTypes'>list document types</a>.
+        To successfully submit a requirement package with this document, find all required fields
+        using <a href='/apis/numbers/v2/#tag/Compliance/operation/listEndUserActivationRequirements'>list End user activation requirements</a>.
+        The document can be created with minimum fields mentioned in list document types and attached to the requirement package.
+        After this, metadata can be updated using <a href='/apis/numbers/v2/#tag/Compliance/operation/updateComplianceDocument'>update document</a>
+        before submitting the requirement package.
+
+        Supported file formats: pdf, jpeg, png, doc, docx.
+        The maximum file size currently supported is 5 MB.
+      tags:
+        - Compliance
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/addComplianceDocumentRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/addComplianceDocumentResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/endUsers:
+    get:
+      summary: List Compliance End Users
+      operationId: listComplianceEndUsers
+      description: |
+        List all End users of an account.
+        The results are sorted by last updated time in reverse chronological order by default without any query filters.
+
+        The following filters can be used to filter the result
+        * End User Type
+        * End User Type and End User Name
+        * Custom Reference
+
+        Also, the results can be sorted by following fields
+        * End User Name
+        * Custom Reference
+      tags:
+        - Compliance
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/endUserTypeQueryParamEq"
+        - $ref: "#/components/parameters/endUserNameQueryParam"
+        - $ref: "#/components/parameters/customReferenceQueryParam"
+        - $ref: "#/components/parameters/rpLimitQueryParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/listEndUsersResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+    post:
+      summary: Create Compliance End User
+      operationId: createComplianceEndUser
+      description: |
+        Create an End user.
+        This newly created End user can be attached to multiple requirement packages.
+        An End user resource can be created with minimum required fields.
+        Please find all minimum required fields for an End user type
+        using <a href='/apis/numbers/v2/#tag/Compliance/operation/listEndUserTypes'>list End user types</a>.
+        If this End user is to be attached to multiple requirement packages,
+        please provide all mandatory fields common to all the requirement packages where this End
+        user needs to be attached before submitting one of the associated requirement packages.
+        Find all required fields for End user for all the requirement packages where this End user needs to be
+        attached using <a href='/apis/numbers/v2/#tag/Compliance/operation/listEndUserActivationRequirements'>list End user activation requirements</a>.
+        End user metadata can be updated with extra required fields after creation
+        using <a href='/apis/numbers/v2/#tag/Compliance/operation/updateComplianceEndUser'>update End user</a>.
+      tags:
+        - Compliance
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/postRequirementsPackageEndUserBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/createEndUserResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/endUsers/{endUserId}:
+    get:
+      summary: Get Compliance End User
+      operationId: getComplianceEndUser
+      description: Retrieve an End User by ID.
+      tags:
+        - Compliance
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/endUserIdPathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/getEndUserResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+    patch:
+      summary: Update Compliance End User
+      operationId: updateComplianceEndUser
+      description: |
+        Update End user's details except `type`.
+        Updates are only allowed in `DRAFT` and `VERIFICATION_FAILED` state.
+        Please note that once an End user's fields have been provided, it can be edited, but can't be cleared or removed.
+      tags:
+        - Compliance
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/endUserIdPathParam"
+      requestBody:
+        $ref: "#/components/requestBodies/patchRequirementsPackageEndUserBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/updateEndUserResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/requirementsPackages:
+    get:
+      summary: List Requirements Packages
+      operationId: listRequirementsPackages
+      description: |
+        List all requirements packages.
+        The results are sorted by last updated time in reverse chronological order by default without any query filters.
+
+        Following filters can be used to filter the result
+        * Country Code : List requirements packages based on the country code.
+        * Phone Number Type : List requirements packages based on the phone number type.
+        * End user Type : List requirements packages based on the End user type.
+        * Custom Reference : List requirements packages based on the custom reference.
+        * Status : List requirements packages based on the status.
+
+      tags:
+        - Requirements Packages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/rpCountryCodeA3QueryParamEq"
+        - $ref: "#/components/parameters/rpPhoneNumberTypeQueryParamEq"
+        - $ref: "#/components/parameters/rpEndUserTypeQueryParamEq"
+        - $ref: "#/components/parameters/statusQueryParamEq"
+        - $ref: "#/components/parameters/rpCustomReferenceQueryParamStartsWith"
+        - $ref: "#/components/parameters/rpLimitQueryParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/listRequirementsPackageResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+    post:
+      summary: Create Requirements Package
+      operationId: createRequirementsPackage
+      description: |
+        Create a requirements package with a set of requirements.
+        Note: Country, Phone Number Type and End User Type cannot be changed once created.
+      tags:
+        - Requirements Packages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/postRequirementsPackageBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/createRequirementsPackageResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/requirementsPackages/{requirementsPackageId}:
+    get:
+      summary: Get Requirements Package
+      operationId: getRequirementsPackage
+      description: Retrieve a requirements package using the id.
+      tags:
+        - Requirements Packages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/requirementsPackageIdPathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/getRequirementsPackageResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+    patch:
+      summary: Update Requirements Package
+      operationId: patchRequirementsPackage
+      description: |
+        Update Requirements package status to `SUBMITTED` to submit a package.
+        * 'acknowledgements' is required for submitting the package with 'allDetailsAccurate' set to true.
+        * Once submitted, all associated assets will be locked and cannot be modified.
+        Update custom reference, email, or callback.
+      tags:
+        - Requirements Packages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/requirementsPackageIdPathParam"
+      requestBody:
+        $ref: "#/components/requestBodies/patchRequirementsPackageBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/updateRequirementsPackageResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/requirementsPackages/{requirementsPackageId}/assets:
+    get:
+      summary: Get Requirements Package Assets
+      operationId: getRequirementsPackageAssets
+      description: Retrieve all assets attached to the requirements package with their details
+      tags:
+        - Requirements Packages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/requirementsPackageIdPathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/getRequirementsPackageAssetsResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+    post:
+      summary: Attach Requirements Package Asset
+      operationId: attachRequirementsPackageAsset
+      description: |
+        Attach an asset to the requirements package.
+      tags:
+        - Requirements Packages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/requirementsPackageIdPathParam"
+      requestBody:
+        $ref: "#/components/requestBodies/postRequirementsPackageAssetsBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/createRequirementsPackageAssetResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/requirementsPackages/{requirementsPackageId}/assets/{assetId}:
+    delete:
+      summary: Detach Requirements Package Asset
+      operationId: detachRequirementsPackageAsset
+      description: Detach an asset from the requirements package.
+      tags:
+        - Requirements Packages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/requirementsPackageIdPathParam"
+        - $ref: '#/components/parameters/requirementsPackageAssetIdPathParam'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/numberActivation/validator:
+    post:
+      summary: Validate Number Activation
+      operationId: validateNumberActivation
+      description: Validate number activation requirements.
+      tags:
+        - Requirements Packages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/postNumberActivationValidatorBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/validateNumberActivationResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+  /accounts/{accountId}/compliance/requirementsPackages/{requirementsPackageId}/history:
+    get:
+      tags:
+        - Requirements Packages
+      summary: Get Requirements Package History
+      operationId: getRequirementsPackageHistory
+      description: Get the history of a requirements package.
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/requirementsPackageIdPathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/getRequirementsPackageHistoryResponse"
+        "400":
+          $ref: "#/components/responses/badRequestError"
+        "401":
+          $ref: "#/components/responses/unauthorizedEUMSError"
+        "403":
+          $ref: "#/components/responses/forbiddenError"
+        "404":
+          $ref: "#/components/responses/notFoundError"
+        "405":
+          $ref: "#/components/responses/methodNotAllowedError"
+        "429":
+          $ref: "#/components/responses/tooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/internalServerError"
+components:
+  parameters:
+    accountId:
+      in: path
+      name: accountId
+      required: true
+      schema:
+        type: string
+      description: Your Bandwidth Account ID.
+      example: "9900000"
+    addressIdPathParam:
+      in: path
+      name: addressId
+      required: true
+      schema:
+        type: string
+        example: daa9dd0f-de97-4103-8530-b31bf4be8fc0
+      description: The Address ID.
+    cityInfoCountryCodeA3PathParam:
+      name: countryCodeA3
+      description: Country Code A3.
+      in: path
+      required: true
+      schema:
+        type: string
+      example: DEU
+    countryCodeA3PathParam:
+      name: countryCodeA3
+      description: Country Code A3
+      in: path
+      required: true
+      schema:
+        type: string
+      example: FRA
+    cityInfoCityQueryParamEqStartsWith:
+      in: query
+      name: city
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        $ref: "#/components/schemas/queryParamStringEqStartsWith"
+      examples:
+        eq:
+          value:
+            eq: Aalen
+        startsWith:
+          value:
+            startsWith: Aal
+      description: The name of the city. The system defaults to return all cities
+        when the query parameter is not passed. The countryCodeA3 is a required parameter
+        with city. Some phone number types like TOLL_FREE may not have any associated
+        cities.
+    cityInfoPostalCodeQueryParamStartsWith:
+      in: query
+      name: postalCode
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        properties:
+          startsWith:
+            type: string
+            example: "734"
+      description: |
+        The postal code of the address. The system defaults to return all
+        postal codes when the query parameter is not passed. The countryCodeA3 is
+        a required parameter with postalCode.
+    addressCustomReferenceQueryParamEqStartsWithContains:
+      in: query
+      name: customReference
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        $ref: "#/components/schemas/queryParamStringEqStartsWithContains"
+      examples:
+        eq:
+          value:
+            eq: home_office
+        startsWith:
+          value:
+            startsWith: home
+        contains:
+          value:
+            contains: office
+      description: |
+        Custom reference enables flexible search operations including exact matches (eq),
+        prefix-based searches (startsWith), and substring-based searches (contains).
+    geoValidationStatusQueryParamEq:
+      in: query
+      name: geoValidationStatus
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        properties:
+          eq:
+            $ref: "#/components/schemas/geoValidationStatusEnum"
+      example:
+        eq: GEO_VALID
+      description: |
+        Geo validation status which can be one of:
+          GEO_VALID, NOT_GEO_VALID, or NOT_GEO_VALIDATED.
+    countryCodeA3QueryParamEq:
+      in: query
+      name: countryCodeA3
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        $ref: "#/components/schemas/queryParamStringEq"
+      example:
+        eq: USA
+      description: Country code of the address in ISO 3166-1 alpha-3 format.
+    cityQueryParamEqStartsWith:
+      in: query
+      name: city
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        $ref: "#/components/schemas/queryParamStringEqStartsWithContains"
+      examples:
+        eq:
+          value:
+            eq: Seattle
+        startsWith:
+          value:
+            startsWith: Seat
+        contains:
+          value:
+            contains: eattl
+      description: The name of the city. The system defaults to return all cities
+        when the query parameter is not passed. The countryCodeA3 is a required parameter
+        with city. Some phone number types like TOLL_FREE may not have any associated
+        cities.
+    postalCodeQueryParamEqStartsWithContains:
+      in: query
+      name: postalCode
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        $ref: "#/components/schemas/queryParamStringEqStartsWithContains"
+      examples:
+        eq:
+          value:
+            eq: "98072"
+        startsWith:
+          value:
+            startsWith: "9807"
+        contains:
+          value:
+            contains: "807"
+      description: The postal code of the address. The system defaults to return all
+        postal codes when the query parameter is not passed. The countryCodeA3 is
+        a required parameter with postalCode.
+    addressFieldsQueryParamContains:
+      description: Any of the location-related fields in the address can be used.
+      examples:
+        contains:
+          value:
+            contains: 123 Main
+      explode: true
+      in: query
+      name: addressFields
+      required: false
+      schema:
+        $ref: '#/components/schemas/queryParamStringContains'
+    afterCursorQueryParam:
+      in: query
+      name: afterCursor
+      required: false
+      schema:
+        type: string
+      example: ArAnD0m1d
+      description: Returns the page after the last record on the current page.
+    limitQueryParam:
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+        default: 10
+        minimum: 1
+        maximum: 100
+        example: 50
+      description: Limit the number of returned records.
+    endUserIdPathParam:
+      name: endUserId
+      description: EndUser ID
+      in: path
+      required: true
+      schema:
+        type: string
+      example: "878345"
+    endUserTypeQueryParamEq:
+      in: query
+      name: type
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        properties:
+          eq:
+            $ref: "#/components/schemas/endUserTypeEnum"
+      example:
+        eq: BUSINESS
+      description: The type of end user.
+    rpEndUserTypeQueryParamEq:
+      in: query
+      name: endUserType
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        properties:
+          eq:
+            $ref: "#/components/schemas/endUserTypeEnum"
+      example:
+        eq: RESIDENTIAL
+      description: The type of end user.
+    endUserNameQueryParam:
+      in: query
+      name: endUserName
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        allOf:
+          - $ref: "#/components/schemas/queryParamStringStartsWith"
+          - type: object
+            properties:
+              sort:
+                $ref: "#/components/schemas/sortEnum"
+      examples:
+        RESIDENTIAL:
+          value:
+            startsWith: Adam
+        BUSINESS:
+          value:
+            startsWith: Alphabet
+      description: The End user name in order 'FirstName LastName' or 'Business Name'
+    rpLimitQueryParam:
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+        default: 10
+        minimum: 1
+        maximum: 100
+        example: 50
+      description: Limit the number of returned records.
+    customReferenceQueryParam:
+      in: query
+      name: customReference
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        allOf:
+          - $ref: "#/components/schemas/queryParamStringStartsWith"
+          - type: object
+            properties:
+              sort:
+                $ref: "#/components/schemas/sortEnum"
+      example:
+        startsWith: home
+      description: Custom reference filter, and can be combined with 'customReference[sort]'
+    documentIdPathParam:
+      in: path
+      name: documentId
+      required: true
+      schema:
+        type: string
+      example: ArAnD0m1d
+      description: Document ID.
+    phoneNumberTypeQueryParamEq:
+      in: query
+      name: phoneNumberType
+      required: true
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        properties:
+          eq:
+            $ref: "#/components/schemas/phoneNumberTypeEnum"
+      example:
+        eq: GEOGRAPHIC
+      description: The type of phone number.
+    requirementsPackageAssetIdPathParam:
+      name: assetId
+      description: Requirements package asset Id
+      in: path
+      required: true
+      schema:
+        type: string
+      example: 925e38bb-6d09-4b25-9828-afcbe9417e53
+    statusQueryParamEq:
+      in: query
+      name: status
+      description: The status of the item
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        $ref: "#/components/schemas/queryParamStringEq"
+      example:
+        eq: VERIFIED
+    rpCustomReferenceQueryParamStartsWith:
+      in: query
+      name: customReference
+      description: Filter by customReference(startsWith).
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        properties:
+          startsWith:
+            minLength: 1
+            maxLength: 100
+      example:
+        startsWith: home
+    rpCountryCodeA3QueryParamEq:
+      in: query
+      name: countryCodeA3
+      description: Country code of the address in ISO 3166-1 alpha-3 format.
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        $ref: "#/components/schemas/queryParamStringEq"
+      example:
+        eq: USA
+    rpPhoneNumberTypeQueryParamEq:
+      in: query
+      name: phoneNumberType
+      description: The type of phone number.
+      required: false
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        properties:
+          eq:
+            $ref: "#/components/schemas/phoneNumberTypeEnum"
+      example:
+        eq: GEOGRAPHIC
+    requirementsPackageIdPathParam:
+      name: requirementsPackageId
+      description: Requirements Package ID
+      in: path
+      required: true
+      schema:
+        type: string
+      example: 815e38bb-6d09-4b25-9828-afcbe9417e53
+  requestBodies:
+    createAddressRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/createAddressRequestData"
+    updateAddressRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/updateAddressData"
+    validateAddressRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/validateAddressRequestData"
+    patchRequirementsPackageEndUserBody:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/endUserData"
+            properties:
+              type:
+                readOnly: true
+          examples:
+            patchEndUserBodyBasicExample:
+              $ref: "#/components/examples/patchEndUserBodyBasicExample"
+    postRequirementsPackageEndUserBody:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/endUserData"
+            required:
+              - type
+    addComplianceDocumentRequest:
+      description: Add a document with any metadata
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: "#/components/schemas/complianceDocumentData"
+              file:
+                type: string
+                format: binary
+          encoding:
+            file:
+              contentType: application/pdf, image/jpeg, image/jpg, image/png, application/msword,
+                application/vnd.openxmlformats-officedocument.wordprocessingml.document
+              style: deepObject
+              explode: true
+            metadata:
+              contentType: application/json
+    updateComplianceDocumentRequest:
+      description: Update document data along with any new file change. Type cannot
+        be modified
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              metadata:
+                $ref: "#/components/schemas/complianceDocumentUpdateData"
+              file:
+                type: string
+                format: binary
+    postNumberActivationValidatorBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/numberActivationRequirementsSet"
+    postRequirementsPackageAssetsBody:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/assetData"
+            required:
+              - assetReferenceId
+              - assetType
+          examples:
+            postRequirementsPackageAssetBodyBasicExample:
+              $ref: "#/components/examples/postRequirementsPackageAssetBodyBasicExample"
+    patchRequirementsPackageBody:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/requirementsPackageData"
+              - type: object
+                properties:
+                  countryCodeA3:
+                    readOnly: true
+                  phoneNumberType:
+                    readOnly: true
+                  endUserType:
+                    readOnly: true
+                  status:
+                    description: Status change to requirement package. Only allowed value is SUBMITTED
+                    type: string
+                    example: SUBMITTED
+            example:
+              customReference: home_office
+              email: foo@bar.com
+              status: SUBMITTED
+    postRequirementsPackageBody:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/requirementsPackageData"
+            required:
+              - countryCodeA3
+              - phoneNumberType
+              - endUserType
+  responses:
+    createAddressResponse:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/createUpdateAddressResponse"
+    listCityInfoResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/listCityInfoResponse"
+    updateAddressResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/createUpdateAddressResponse"
+    getAddressResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericAddressResponse"
+    listAddressesResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/listAddressesResponse"
+    validateAddressResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/validateAddressResponse"
+    getAddressFieldsResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/getAddressFieldsResponse"
+    createAddressBadRequestResponse:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/addressBadRequest"
+          examples:
+            badRequestAddressSuggestionExample:
+              $ref: "#/components/examples/geoValidationAddressSuggestionExample"
+            badRequestAddressMissingGeoValidationFeatureExample:
+              $ref: "#/components/examples/geoValidationDisabledExample"
+    validateAddressBadRequestResponse:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericError"
+          examples:
+            badRequestErrorExample:
+              $ref: "#/components/examples/geoValidationAddressSuggestionExample"
+    badRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericError"
+          examples:
+            badRequestErrorExample:
+              $ref: "#/components/examples/badRequestErrorExample"
+    notFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericError"
+          examples:
+            notFoundErrorExample:
+              $ref: "#/components/examples/notFoundErrorExample"
+    methodNotAllowedError:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericError"
+          examples:
+            methodNotAllowedErrorExample:
+              $ref: "#/components/examples/methodNotAllowedErrorExample"
+    tooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericError"
+          examples:
+            tooManyRequestsErrorExample:
+              $ref: "#/components/examples/tooManyRequestsErrorExample"
+    internalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericError"
+          examples:
+            internalServerErrorExample:
+              $ref: "#/components/examples/internalServerErrorExample"
+    forbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericError"
+          examples:
+            forbiddenErrorExample:
+              $ref: "#/components/examples/forbiddenErrorExample"
+    unauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericError"
+          examples:
+            unauthorizedErrorExample:
+              $ref: "#/components/examples/unauthorizedErrorExample"
+    updateAddressBadRequestResponse:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/updateGeoValidationStatusSuggestionAddressResponse"
+    updateEndUserResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/endUserResponse"
+    getEndUserResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/endUserResponse"
+    createEndUserResponse:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/endUserResponse"
+    listEndUsersResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/endUserListResponse"
+    addComplianceDocumentResponse:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/createUpdateComplianceDocumentResponse"
+    downloadDocumentResponse:
+      description: OK
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
+    listRequirementsResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requirementsListResponse"
+    getComplianceDocumentResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/getComplianceDocumentResponse"
+    listEndUserTypesResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/endUserTypesListResponse"
+    listDocumentTypesResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/documentTypesListResponse"
+    unauthorizedEUMSError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/unauthorizedComplianceResponse"
+    validateNumberActivationResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/numberActivationValidatorResponse"
+    getRequirementsPackageHistoryResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requirementsPackageHistoryResponse"
+    createRequirementsPackageAssetResponse:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requirementsPackageAssetsPostResponse"
+    listRequirementsPackageResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requirementsPackageListResponse"
+    getRequirementsPackageAssetsResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requirementsPackageAssetsGetResponse"
+    updateRequirementsPackageResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requirementsPackageCreateUpdateResponse"
+          examples:
+            requirementsPackageResponseExample:
+              $ref: "#/components/examples/requirementsPackageResponseExample"
+    createRequirementsPackageResponse:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requirementsPackageCreateUpdateResponse"
+          examples:
+            requirementsPackageResponseExample:
+              $ref: "#/components/examples/requirementsPackageResponseExample"
+    getRequirementsPackageResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requirementsPackageGetResponse"
+          examples:
+            requirementsPackageResponseExample:
+              $ref: "#/components/examples/requirementsPackageResponseExample"
+  schemas:
+    sortEnum:
+      type: string
+      enum:
+        - ASC
+        - DESC
+    geoValidationStatusEnum:
+      type: string
+      enum:
+        - GEO_VALID
+        - NOT_GEO_VALID
+        - NOT_GEO_VALIDATED
+      description: |
+        The geo validation status of the address.
+        - `GEO_VALID`: The address is valid and geo validated.
+        - `NOT_GEO_VALID`: The address is not valid or geo validated.
+        - `NOT_GEO_VALIDATED`: The address has not been geo validated yet.
+    endUserTypeEnum:
+      type: string
+      description: The type of end user
+      enum:
+        - BUSINESS
+        - RESIDENTIAL
+        - SOLE_PROPRIETOR
+      example: BUSINESS
+    phoneNumberTypeEnum:
+      type: string
+      description: The type of phone number.
+      enum:
+        - GEOGRAPHIC
+        - NATIONAL
+        - MOBILE
+        - TOLL_FREE
+        - SHARED_COST
+      example: GEOGRAPHIC
+    createAddressRequestData:
+      allOf:
+        - $ref: "#/components/schemas/validateAddressRequestData"
+        - type: object
+          properties:
+            geoValidation:
+              $ref: "#/components/schemas/geoValidation"
+    addressRequestData:
+      type: object
+      properties:
+        customReference:
+          $ref: "#/components/schemas/customReference"
+        countryCodeA3:
+          $ref: "#/components/schemas/countryCodeA3"
+        addressLine1:
+          $ref: "#/components/schemas/addressLine1"
+        addressLine2:
+          $ref: "#/components/schemas/addressLine2"
+        city:
+          $ref: "#/components/schemas/addressCity"
+        stateAbbreviation:
+          $ref: "#/components/schemas/stateAbbreviation"
+        postalCode:
+          $ref: "#/components/schemas/postalCode"
+    addressId:
+      type: string
+      description: Address ID
+      example: daa9dd0f-de97-4103-8530-b31bf4be8fc0
+    customReference:
+      type: string
+      minLength: 1
+      maxLength: 100
+      description: |
+        A custom reference name.
+        It can be used for your own reference to the item to easily identify one of your customers,
+        requirements package, enduser etc.
+      example: home_office
+    countryCodeA3:
+      type: string
+      description: Country code of the address in ISO 3166-1 alpha-3 format.
+      example: USA
+    addressLine1:
+      type: string
+      description: The first line of the address.
+      example: 123 Main St
+    addressLine2:
+      type: string
+      description: The second line of the address.
+      example: Suite 200
+    stateAbbreviation:
+      type: string
+      description: The state abbreviation of the address.
+      example: WA
+    geoValidation:
+      type: object
+      properties:
+        required:
+          type: boolean
+          description: |
+            Flag to indicate if the address should be geo validated or
+            not. By default the value is set to true.
+          example: true
+        createOnFailure:
+          type: boolean
+          description: |
+            Flag to indicate if the address should be created even if geo
+            validation fails. 'false' indicates that the creation request will fail
+            and “suggestedAddresses” will be provided in the response. By default
+            the value is set to false.
+          example: false
+    unsupportedFeatures:
+      description: Excluded Features
+      type: array
+      items:
+        type: object
+        properties:
+          featureName:
+            $ref: "#/components/schemas/featureNameEnum"
+          addressCriteria:
+            type: array
+            items:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: |
+                    A human-readable explanation that SHOULD be specific
+                    to this occurrence of the problem
+                  example: |
+                    Field 'province' is optional, but is required for the feature 'REQUIREMENTS_PACKAGE'
+    featureNameEnum:
+      type: string
+      description: A unique identifier for feature.
+      enum:
+        - REQUIREMENTS_PACKAGE
+        - EMERGENCY
+        - PORTING
+    addressFieldSchema:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The address field to be provided.
+          example: postalCode
+        friendlyName:
+          type: string
+          description: The friendly name of the address field.
+          example: Postal code
+        description:
+          type: string
+          description: The description of the address field.
+          example: |
+            Enter the 5-digit ZIP code for your location. You can also enter
+            a 9-digit ZIP+4 code. For example, 27607 or 27607-6789 are valid ZIP codes.
+        type:
+          $ref: "#/components/schemas/fieldType"
+        maxLength:
+          $ref: "#/components/schemas/fieldMaxLength"
+        required:
+          type: boolean
+          description: The address field is required or optional
+          example: true
+        changeable:
+          type: boolean
+          description: The address field value can be updated or not
+          example: false
+        usedBy:
+          type: array
+          items:
+            type: object
+            properties:
+              feature:
+                type: string
+                description: Feature name
+                example: REQUIREMENTS_PACKAGE
+              required:
+                type: boolean
+                description: The address field is required or optional for the feature
+                example: true
+    validateAddressRequestData:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/addressRequestData"
+        - type: object
+          properties:
+            geoValidation:
+              $ref: "#/components/schemas/geoValidation"
+    updateAddressData:
+      type: object
+      properties:
+        customReference:
+          $ref: "#/components/schemas/customReference"
+        geoValidation:
+          $ref: "#/components/schemas/geoValidation"
+    validateAddressResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: object
+          properties:
+            address:
+              $ref: "#/components/schemas/validateAddressResponseData"
+            geoValidationStatus:
+              $ref: "#/components/schemas/geoValidationStatusEnum"
+            excludedFeatures:
+              $ref: "#/components/schemas/unsupportedFeatures"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+    getAddressFieldsResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: object
+          properties:
+            addressFields:
+              type: array
+              items:
+                $ref: "#/components/schemas/addressFieldSchema"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+    addressCity:
+      type: string
+      description: The city of the address.
+      example: Seattle
+    fieldType:
+      type: string
+      description: The data type of the field
+      example: string
+    fieldMaxLength:
+      type: integer
+      description: The length of the field
+      example: 256
+    postalCode:
+      type: string
+      description: The postal code of the address.
+      example: "98104"
+    createdDateTime:
+      type: string
+      description: The date and time this object was created in ISO 8601 format
+      example: "2024-03-11T04:09:25.399Z"
+    updatedDateTime:
+      type: string
+      description: The date and time this object was last updated in ISO 8601 format
+      example: "2024-03-11T04:09:25.399Z"
+    errorCode:
+      type: integer
+      format: int32
+      description: |
+        An application-specific error code for services with extensive
+        error scenarios to supplement `description`
+      minimum: 4
+      example: 51130
+    errorDescription:
+      type: string
+      description: |
+        A human-readable explanation that SHOULD be specific to this occurrence
+        of the problem
+      example: There was an issue with a field in your request body
+    errorType:
+      type: string
+      description: |
+        A short, human-readable summary of the problem that SHOULD NOT
+        change from occurrence to occurrence of the problem
+      example: REQUEST_ERROR
+    errorSource:
+      type: object
+      properties:
+        parameter:
+          type: string
+          description: A string indicating which URI query parameter caused the error
+          example: someParameter
+        field:
+          type: string
+          description: A string indicating which request body field caused the error
+          example: someField
+        header:
+          type: string
+          description: A string indicating which header field caused the error
+          example: someHeader
+        reference:
+          type: string
+          description: |
+            A string that references a resource ID or path to the resource
+            (or non-existent resource) causing the error
+          example: /some/reference
+    queryParamStringEqStartsWith:
+      type: object
+      properties:
+        eq:
+          type: string
+        startsWith:
+          type: string
+    queryParamStringContains:
+      type: object
+      properties:
+        contains:
+          type: string
+    queryParamStringEqStartsWithContains:
+      type: object
+      properties:
+        contains:
+          type: string
+        eq:
+          type: string
+        startsWith:
+          type: string
+    queryParamStringEq:
+      type: object
+      properties:
+        eq:
+          type: string
+    genericError:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: object
+          nullable: true
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+      required:
+        - links
+        - data
+        - errors
+    updateGeoValidationStatusSuggestionAddressResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: object
+          properties:
+            address:
+              $ref: "#/components/schemas/validateAddressResponseData"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+          example:
+            - code: 205617
+              description: |
+                Address provided is not geo-valid.
+                Please refer suggestedAddresses for a list of geo valid addresses
+              meta:
+                suggestedAddresses:
+                  - city: "SEATTLE"
+                    countryCodeA3: USA
+                    stateAbbreviation: WA
+                    postalCode: "98104"
+                    addressLine1: 123 S MAIN ST STE 200
+    createUpdateAddressResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: object
+          properties:
+            address:
+              $ref: "#/components/schemas/addressResponseData"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+    listAddressesResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/listAddressesResponseData"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+    genericAddressResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: object
+          properties:
+            address:
+              $ref: "#/components/schemas/addressResponseData"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+    listCityInfoResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/cityInfoData"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+    addressResponseData:
+      allOf:
+        - $ref: "#/components/schemas/validateAddressResponseData"
+        - type: object
+          properties:
+            geoValidationStatus:
+              $ref: "#/components/schemas/geoValidationStatusEnum"
+            addressId:
+              $ref: "#/components/schemas/addressId"
+            createdDateTime:
+              $ref: "#/components/schemas/createdDateTime"
+            updatedDateTime:
+              $ref: "#/components/schemas/updatedDateTime"
+    listAddressesResponseData:
+      type: object
+      properties:
+        address:
+          $ref: "#/components/schemas/addressResponseData"
+    validateAddressResponseData:
+      type: object
+      properties:
+        customReference:
+          $ref: "#/components/schemas/customReference"
+        countryCodeA3:
+          $ref: "#/components/schemas/countryCodeA3"
+        addressLine1:
+          $ref: "#/components/schemas/addressLine1"
+        addressLine2:
+          $ref: "#/components/schemas/addressLine2"
+        city:
+          $ref: "#/components/schemas/addressCity"
+        stateAbbreviation:
+          $ref: "#/components/schemas/stateAbbreviation"
+        postalCode:
+          $ref: "#/components/schemas/postalCode"
+    cityInfoData:
+      type: array
+      items:
+        type: object
+        properties:
+          city:
+            type: string
+            description: The name of the city.
+            example: Seattle
+          postalCode:
+            type: string
+            description: The postal code of the address.
+            example: "98104"
+    link:
+      description: The URI link details to self or a related resource with the relation
+      type: object
+      properties:
+        href:
+          type: string
+          description: URI of the link
+          example: /resource/uri
+        rel:
+          type: string
+          description: Specifies the relationship between this link and the resource
+          example: self
+        method:
+          type: string
+          description: HTTP method to be used
+          example: GET
+      required:
+        - href
+        - rel
+        - method
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier for this particular instance of this problem
+          example: optional-error-id
+        type:
+          $ref: "#/components/schemas/errorType"
+        description:
+          $ref: "#/components/schemas/errorDescription"
+        code:
+          $ref: "#/components/schemas/errorCode"
+        meta:
+          type: object
+          description: A meta object containing application-specific information or
+            non-standard metadata about the error
+        source:
+          $ref: "#/components/schemas/errorSource"
+      required:
+        - code
+        - description
+    addressBadRequest:
+      description: addressBadRequest
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: object
+          nullable: true
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+    complianceDocumentUpdateData:
+      description: Metadata of updated document
+      type: object
+      properties:
+        customReference:
+          $ref: "#/components/schemas/customReference"
+        description:
+          $ref: "#/components/schemas/documentDescription"
+        fields:
+          $ref: "#/components/schemas/fields"
+    endUserResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          $ref: "#/components/schemas/endUserData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    endUserListResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/endUserData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    createUpdateComplianceDocumentResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          $ref: "#/components/schemas/complianceDocumentResponseData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    requirementsListResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/requirementData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    getComplianceDocumentResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          $ref: "#/components/schemas/complianceDocumentResponseData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    endUserTypesListResponse:
+      description: Response with all End user type details
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/endUserTypeData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    documentTypesListResponse:
+      description: Response with all document type details
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/documentTypeData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    complianceDocumentResponseData:
+      allOf:
+        - $ref: "#/components/schemas/complianceDocumentData"
+        - type: object
+          properties:
+            documentId:
+              $ref: "#/components/schemas/documentId"
+            status:
+              $ref: "#/components/schemas/documentStatusEnum"
+            fileContentExists:
+              $ref: "#/components/schemas/fileContentExists"
+            createdDateTime:
+              $ref: "#/components/schemas/createdDateTime"
+            updatedDateTime:
+              $ref: "#/components/schemas/updatedDateTime"
+            fileName:
+              $ref: "#/components/schemas/fileName"
+    complianceDocumentData:
+      type: object
+      properties:
+        customReference:
+          $ref: "#/components/schemas/customReference"
+        type:
+          $ref: "#/components/schemas/complianceDocumentType"
+        description:
+          $ref: "#/components/schemas/complianceDocumentDescription"
+        fields:
+          $ref: "#/components/schemas/fields"
+    fileContentExists:
+      type: boolean
+      description: Indicates if file exists on system
+      example: false
+    documentId:
+      type: string
+      description: Unique identifier of the document
+      format: uuid
+      example: daa9dd0f-de97-4103-8530-b31bf4be8fc0
+    documentStatusEnum:
+      type: string
+      description: Document Statuses
+      enum:
+        - DRAFT
+        - SUBMITTED
+        - PROCESSING
+        - VERIFIED
+        - VERIFICATION_FAILED
+      example: SUBMITTED
+    complianceDocumentType:
+      type: string
+      description: Unique name representing the type of document
+      example: tradeLicense
+    documentDescription:
+      type: string
+      description: Description about the document
+      example: Letter of Authorization
+    complianceDocumentDescription:
+      type: string
+      description: Description about the document
+      maxLength: 1000
+      example: Trade License
+    fileName:
+      type: string
+    queryParamStringStartsWith:
+      type: object
+      properties:
+        startsWith:
+            type: string
+    unauthorizedComplianceResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: Epoch timestamp of the error occurrence.
+          example: 1742186541633
+        status:
+          type: integer
+          example: 401
+          description: HTTP status code.
+        error:
+          type: string
+          description: Error message.
+          example: Unauthorized
+        path:
+          type: string
+          description: The request path that caused the error.
+          example: /api/v2/self-resource
+      required:
+        - timestamp
+        - status
+        - error
+        - path
+    requirementData:
+      type: object
+      properties:
+        countryCodeA3:
+          $ref: "#/components/schemas/countryCodeA3String"
+        phoneNumberType:
+          $ref: "#/components/schemas/phoneNumberTypeEnum"
+        endUserType:
+          $ref: "#/components/schemas/endUserTypeEnum"
+        requirement:
+          $ref: "#/components/schemas/requirement"
+    endUserTypeData:
+      description: EndUser type specification
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/endUserTypeEnum"
+        fields:
+          description: List of all accepted End user fields
+          type: array
+          items:
+            $ref: "#/components/schemas/endUserField"
+          example:
+            - fieldName: salutation
+              friendlyName: Salutation
+              type: String
+              values:
+                - MR
+                - MRS
+              required: true
+            - fieldName: firstName
+              friendlyName: First Name
+              type: String
+              maxLength: 300
+              required: true
+            - friendlyName: Tax ID Number
+              fieldName: taxIdNumber
+              type: String
+              maxLength: 300
+              required: false
+    endUserData:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/endUserTypeEnum"
+        customReference:
+          $ref: "#/components/schemas/customReference"
+        fields:
+          $ref: "#/components/schemas/fields"
+        endUserId:
+          $ref: "#/components/schemas/endUserId"
+        status:
+          $ref: "#/components/schemas/endUserStatusEnum"
+        createdDateTime:
+          $ref: "#/components/schemas/createdDateTime"
+        updatedDateTime:
+          $ref: "#/components/schemas/updatedDateTime"
+    endUserId:
+      type: string
+      description: Unique identifier of the endUser
+      format: uuid
+      readOnly: true
+      example: dcb9dd0f-de97-4103-8530-b31bf4be8fc0
+    endUserStatusEnum:
+      type: string
+      description: End user status
+      enum:
+        - DRAFT
+        - SUBMITTED
+        - VERIFIED
+        - VERIFICATION_FAILED
+      example: DRAFT
+    countryCodeA3String:
+      type: string
+      description: Country code in ISO 3166-1 alpha-3 format
+      example: FRA
+    errors:
+      type: array
+      items:
+        $ref: "#/components/schemas/error"
+      nullable: true
+    requirement:
+      description: The details of different requirements
+      type: object
+      properties:
+        endUser:
+          $ref: "#/components/schemas/endUserRequirement"
+        address:
+          $ref: "#/components/schemas/addressRequirement"
+        supportingDocuments:
+          description: List of all document requirements
+          type: array
+          items:
+            $ref: "#/components/schemas/supportingDocumentsRequirement"
+    endUserRequirement:
+      description: EndUser requirement specification
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/endUserTypeEnum"
+        fields:
+          description: List of all accepted end user fields
+          type: array
+          items:
+            $ref: "#/components/schemas/endUserField"
+    addressRequirement:
+      description: Address requirement specification
+      type: object
+      properties:
+        location:
+          $ref: "#/components/schemas/addressLocationEnum"
+    addressLocationEnum:
+      type: string
+      description: The address location
+      enum:
+        - LOCAL
+        - NATIONAL
+        - WORLDWIDE
+      example: NATIONAL
+    supportingDocumentsRequirement:
+      description: Document requirement specification
+      type: object
+      properties:
+        name:
+          description: The name of the document
+          type: string
+          example: Business registration
+        type:
+          $ref: "#/components/schemas/supportingDocumentTypeEnum"
+        description:
+          description: A small description about the document
+          type: string
+          example: The business registration document
+        acceptedDocuments:
+          description: List of document types accepted against the supporting document
+          type: array
+          items:
+            $ref: "#/components/schemas/documentTypeData"
+    supportingDocumentTypeEnum:
+      type: string
+      description: The type of the supporting document
+      enum:
+        - ADDRESS
+        - IDENTITY
+      example: ADDRESS
+    documentTypeData:
+      description: Document type specification
+      type: object
+      properties:
+        type:
+          description: Unique name indicating the type of the document
+          type: string
+          example: businessRegistration
+        friendlyName:
+          description: Human readable description of the document
+          type: string
+          example: Business registration
+        fields:
+          description: List of all accepted document fields
+          type: array
+          items:
+            $ref: "#/components/schemas/endUserField"
+          example:
+            - fieldName: companyName
+              friendlyName: Company Name
+              type: String
+              maxLength: 500
+            - fieldName: issueDate
+              friendlyName: Issue Date
+              type: Date
+    fields:
+      type: object
+      description: Field is a key value pair of attribute name and value. All Date
+        or Number type values should be provided as a 'string'. Format for the Date
+        type is YYYY-MM-DD.
+      additionalProperties:
+        type: string
+      example:
+        firstName: First Name
+        issueDate: "2020-11-23"
+        validity: "120"
+    endUserField:
+      description: Field information
+      type: object
+      properties:
+        friendlyName:
+          type: string
+          description: Human readable description of the field
+          example: Salutation
+        fieldName:
+          type: string
+          description: Unique name of the field
+          example: salutation
+        type:
+          type: string
+          description: The data type of the field
+          example: String
+        values:
+          type: array
+          description: Provides accepted values for the field. Not Applicable when type value is 'Date'.
+          items:
+            type: string
+          example:
+            - Mr.
+            - Mrs.
+        required:
+          description: Specifies if the field is mandatory
+          type: boolean
+          example: true
+        maxLength:
+          description: Maximum allowed character length of the field. Not Applicable
+            when type value is 'Date' or values are provided.
+          type: integer
+          example: 10
+
+
+
+    numberActivationValidatorResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          $ref: "#/components/schemas/numberActivationValidatorResult"
+        errors:
+          $ref: "#/components/schemas/errors"
+    requirementsPackageHistoryResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/requirementsPackageHistoryData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    requirementsPackageAssetsPostResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          $ref: "#/components/schemas/assetData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    requirementsPackageListResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/requirementsPackageData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    requirementsPackageAssetsGetResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/assetGetData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    requirementsPackageCreateUpdateResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          $ref: "#/components/schemas/requirementsPackageData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    requirementsPackageGetResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+        data:
+          $ref: "#/components/schemas/requirementsPackageData"
+        errors:
+          $ref: "#/components/schemas/errors"
+    numberActivationValidatorResult:
+      description: |
+        Details of requirements for number activation validation.
+        Activatable indicates the TN is valid and can be provisioned or linked to a service.
+        Not-Activatable indicates the TN cannot be linked for activation.
+      type: object
+      properties:
+        requirementsSets:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/numberActivationRequirementsData"
+              - type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/requirementsPackageStatusEnum'
+                  result:
+                    description: Details of results of number activation validation
+                    type: object
+                    properties:
+                      activatable:
+                        $ref: "#/components/schemas/numberActivationResultData"
+                      notActivatable:
+                        $ref: "#/components/schemas/numberActivationResultData"
+    assetData:
+      description: Asset information with associated asset data
+      type: object
+      properties:
+        assetId:
+          description: Unique id of the asset
+          readOnly: true
+          type: string
+          example: 93ac73e8-20a7-95ec-bd32-4e8270e66c31
+        assetType:
+          $ref: "#/components/schemas/assetTypeEnum"
+        assetReferenceId:
+          description: Id of the referenced asset object
+          type: string
+          example: 05ee3231-ad80-4fc5-9c13-68ffc26846a5
+        assetReferenceData:
+          description: Details of the referenced asset object. It can corresponds
+            to an address, endUser or document
+          readOnly: true
+          oneOf:
+            - $ref: "#/components/schemas/createAddressRequestData"
+            - $ref: "#/components/schemas/complianceDocumentResponseData"
+            - $ref: "#/components/schemas/endUserData"
+        createdDateTime:
+          allOf:
+            - $ref: "#/components/schemas/createdDateTime"
+          readOnly: true
+        updatedDateTime:
+          allOf:
+            - $ref: "#/components/schemas/updatedDateTime"
+          readOnly: true
+    assetTypeEnum:
+      type: string
+      description: Type of the asset
+      enum:
+        - ADDRESS
+        - END_USER
+        - DOCUMENT
+      example: ADDRESS
+    assetGetData:
+      description: Asset information with associated asset data
+      type: object
+      properties:
+        assetId:
+          description: Unique id of the asset
+          readOnly: true
+          type: string
+          example: 93ac73e8-20a7-95ec-bd32-4e8270e66c31
+        assetReferenceId:
+          description: Id of the referenced asset object
+          type: string
+          example: 05ee3231-ad80-4fc5-9c13-68ffc26846a5
+        assetType:
+          $ref: "#/components/schemas/assetTypeEnum"
+        assetReferenceData:
+          description: Details of the referenced asset object. It can corresponds
+            to an address, endUser or document
+          readOnly: true
+          oneOf:
+            - $ref: "#/components/schemas/addressResponseAssetData"
+            - $ref: "#/components/schemas/endUserResponseAssetData"
+            - $ref: "#/components/schemas/complianceDocumentResponseData"
+        createdDateTime:
+          allOf:
+            - $ref: "#/components/schemas/createdDateTime"
+          readOnly: true
+        updatedDateTime:
+          allOf:
+            - $ref: "#/components/schemas/updatedDateTime"
+          readOnly: true
+    requirementsPackageHistoryData:
+      description: History of the Requirements package
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/requirementsPackageStatusEnum"
+        customReference:
+          type: string
+          description: The customReference of the requirements package
+        email:
+          type: string
+          format: email
+          description: The email provided as part of the requirements
+        callbacks:
+          type: string
+          format: uri
+          description: The callback provided as part of the requirements
+        dateTime:
+          type: string
+          format: date-time
+          description: The date and time of the requirements package event in ISO 8601 format
+          example: "2015-03-11T04:09:25.399Z"
+        author:
+          type: string
+          description: The name of the user who performed the requirements package event
+          example: Bandwidth User
+        remarks:
+          type: string
+          description: The remarks, if any, provided by the author along with the requirements package event
+          maxLength: 5000
+          example: Remarks provided by user
+        allDetailsAccurate:
+          type: boolean
+          description: The confirmation on accuracy of data submitted at the time of the requirements package event
+          example: true
+    requirementsPackageStatusEnum:
+      type: string
+      description: Status of the Requirements package
+      enum:
+        - DRAFT
+        - SUBMITTED
+        - VERIFIED
+        - VERIFICATION_FAILED
+        - DISABLED
+        - AUTO_VALIDATED
+      example: SUBMITTED
+    requirementsPackageData:
+      description: Details of the Requirements package
+      type: object
+      properties:
+        requirementsPackageId:
+          allOf:
+            - $ref: "#/components/schemas/requirementsPackageId"
+          readOnly: true
+        countryCodeA3:
+          $ref: "#/components/schemas/countryCodeA3String"
+        phoneNumberType:
+          $ref: "#/components/schemas/phoneNumberTypeEnum"
+        endUserType:
+          $ref: "#/components/schemas/endUserTypeEnum"
+        customReference:
+          $ref: "#/components/schemas/customReference"
+        email:
+          $ref: "#/components/schemas/email"
+        callback:
+          $ref: "#/components/schemas/callbackUrl"
+        acknowledgements:
+          $ref: "#/components/schemas/requirementsPackageAcknowledgements"
+        status:
+          allOf:
+            - $ref: '#/components/schemas/requirementsPackageStatusEnum'
+          readOnly: true
+        createdDateTime:
+          allOf:
+            - $ref: "#/components/schemas/createdDateTime"
+          readOnly: true
+        updatedDateTime:
+          allOf:
+            - $ref: "#/components/schemas/updatedDateTime"
+          readOnly: true
+        remarks:
+          $ref: "#/components/schemas/remarks"
+    numberActivationResultData:
+      description: Details of result of a number activation
+      type: object
+      properties:
+        areaCodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/areaCode"
+        reasons:
+          type: array
+          items:
+            type: string
+    remarks:
+      type: string
+      description: Remarks provided by the user or admin
+      maxLength: 5000
+      readOnly: true
+      example: Remarks provided by Admin
+    callbackUrl:
+      description: Callback URL
+      type: string
+      example: http://somehost.com/new-callback
+    email:
+      type: string
+      format: email
+      minLength: 0
+      maxLength: 500
+      pattern:
+        ^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$
+      example: foo@bar.com
+    requirementsPackageAcknowledgements:
+      description: Captures the acknowledgments on requirements package submission. Mandatory when status is provided
+      type: object
+      properties:
+        allDetailsAccurate:
+          type: boolean
+          description: Confirms that all provided information is accurate and valid
+            for the end user attached to the requirements package.
+          example: true
+    addressResponseAssetData:
+      type: object
+      properties:
+        addressId:
+          $ref: "#/components/schemas/addressId"
+        city:
+          $ref: "#/components/schemas/addressCity"
+        countryCodeA3:
+          $ref: "#/components/schemas/countryCodeA3"
+        postalCode:
+          $ref: "#/components/schemas/postalCode"
+        addressLine1:
+          $ref: "#/components/schemas/addressLine1"
+        addressLine2:
+          $ref: "#/components/schemas/addressLine2"
+        stateAbbreviation:
+          $ref: "#/components/schemas/stateAbbreviation"
+        customReference:
+          $ref: "#/components/schemas/customReference"
+        geoValidationStatus:
+          $ref: "#/components/schemas/geoValidationStatusEnum"
+        createdDateTime:
+          $ref: "#/components/schemas/createdDateTime"
+        updatedDateTime:
+          $ref: "#/components/schemas/updatedDateTime"
+    endUserResponseAssetData:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/endUserTypeEnum"
+        customReference:
+          $ref: "#/components/schemas/customReference"
+        fields:
+          $ref: "#/components/schemas/fields"
+        endUserId:
+          $ref: "#/components/schemas/endUserId"
+        status:
+          $ref: "#/components/schemas/endUserStatusEnum"
+        createdDateTime:
+          $ref: "#/components/schemas/createdDateTime"
+        updatedDateTime:
+          $ref: "#/components/schemas/updatedDateTime"
+    numberActivationRequirementsSet:
+      description: A set of number activation requirements
+      type: object
+      properties:
+        requirementsSets:
+          type: array
+          items:
+            $ref: "#/components/schemas/numberActivationRequirementsData"
+      required:
+        - requirementsSets
+    numberActivationRequirementsData:
+      description: Details of requirements for number activation
+      type: object
+      properties:
+        requirementsPackageId:
+          $ref: "#/components/schemas/requirementsPackageId"
+        countryCodeA3:
+          $ref: "#/components/schemas/countryCodeA3String"
+        phoneNumberType:
+          $ref: "#/components/schemas/phoneNumberTypeEnum"
+        referenceId:
+          type: string
+          description: A unique reference id to the requirement set
+          example: requirementsSetReference
+        areaCodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/areaCode"
+          example:
+            - '454'
+            - '456'
+            - '794'
+            - '796'
+      required:
+        - requirementsPackageId
+        - countryCodeA3
+        - phoneNumberType
+        - areaCodes
+    areaCode:
+      type: string
+      description: The 1 to 6 digit area code associated with the phone number.
+      example: "435"
+    requirementsPackageId:
+      type: string
+      description: Unique identifier for requirements package
+      example: 93ac73e8-20a7-95ec-bd32-4e8270e66c31
+  examples:
+    geoValidationAddressSuggestionExample:
+      summary: Example of Geo-validation suggestion address
+      value:
+        links: []
+        data: null
+        errors:
+          - description: |
+              Address provided is not geo-valid.
+              Please refer suggestedAddresses for a list of geo valid addresses
+            code: 205617
+            meta:
+              suggestedAddresses:
+                - countryCodeA3: USA
+                  addressLine1: Main Street, 123
+                  city: Seattle
+                  stateAbbreviation: CA
+                  postalCode: "67890"
+                - countryCodeA3: USA
+                  addressLine1: 456 Elm Street
+                  city: Seattle
+                  stateAbbreviation: NC
+                  postalCode: 67890
+    geoValidationDisabledExample:
+      summary: Example of Geo-validation not enabled on account
+      value:
+        links: []
+        data: null
+        errors:
+          - type: bad-request
+            description: Geo-validation is not enabled for this account. Please contact customer support.
+            code: 20011
+    badRequestErrorExample:
+      summary: Bad Request Error Example
+      value:
+        links: []
+        data: null
+        errors:
+          - type: bad-request
+            description: There was an issue with your request.
+            code: 205617
+    unauthorizedErrorExample:
+      summary: Unauthorized Error Example
+      value:
+        links: []
+        data: null
+        errors:
+          - type: authentication-credentials
+            description: Invalid or missing credentials.
+            code: 206401
+    forbiddenErrorExample:
+      summary: Unauthorized Error Example
+      value:
+        links: []
+        data: null
+        errors:
+          - type: resource-permissions
+            description: User does not have permissions to access this resource.
+            code: 109107
+    notFoundErrorExample:
+      summary: Not Found Error Example
+      value:
+        links: []
+        data: null
+        errors:
+          - type: resource-not-found
+            description: The resource specified cannot be found.
+            code: 50420
+    methodNotAllowedErrorExample:
+      summary: An example of a generic Not Allowed Error Example
+      value:
+        links: []
+        data: null
+        errors:
+          - type: http-method-not-supported
+            description: The HTTP method used is not supported by this resource.
+            code: 205621
+            meta:
+              method: TRACE
+    tooManyRequestsErrorExample:
+      summary: Too Many Requests Error Example
+      value:
+        links: []
+        data: null
+        errors:
+          - type: rate-limiting
+            description: |
+              Rate limit exceeded. Wait for the time specified in the "Retry-After"
+              header before sending another request.
+            code: 32002
+    internalServerErrorExample:
+      summary: Internal Server Error Example
+      value:
+        links: []
+        data: null
+        errors:
+          - type: internal-server-error
+            description: |
+              Unexpected internal server error. Contact Bandwidth Customer
+              Support if this problem persists.
+            code: 32030
+    patchEndUserBodyBasicExample:
+      summary: Update customReference, add or modify fields
+      value:
+        customReference: "New custom reference"
+        fields:
+          companyVat: "AB123456"
+          dateOfBirth: "1992-11-23"
+          firstName: "First Name"
+    postRequirementsPackageAssetBodyBasicExample:
+      summary: Attach an asset to requirement package
+      value:
+        assetReferenceId: 05ee3231-ad80-4fc5-9c13-68ffc26846a5
+        assetType: ADDRESS
+    requirementsPackageResponseExample:
+      summary: Requirements Package Response Example
+      value:
+        links:
+          - href: https://api.bandwidth.com/api/v2/accounts/1/compliance/requirementsPackages/46bd4a91-582d-442f-bd1b-bcf17ca7fc6a
+            rel: self
+            method: GET
+        data:
+          requirementsPackageId: 93ac73e8-20a7-95ec-bd32-4e8270e66c31
+          countryCodeA3: FRA
+          phoneNumberType: GEOGRAPHIC
+          endUserType: BUSINESS
+          customReference: home_office
+          email: foo@bar.com
+          callback: http://somehost.com/new-callback
+          acknowledgements:
+            allDetailsAccurate: true
+          status: SUBMITTED
+          createdDateTime: "2024-03-11T04:09:25.399Z"
+          updatedDateTime: "2024-03-11T04:09:25.399Z"
+          remarks: Remarks provided by Admin
+        errors: []
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: |-
+        Basic authentication is a simple authentication scheme built into the HTTP protocol. To use it, send your HTTP requests with an `Authorization` header that contains the word `Basic` followed by a space and a Base64-encoded string `username:password`.
+
+        - Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |-
+        Bearer authentication (also called token authentication) is an HTTP authentication scheme that involves security tokens called bearer tokens. The name “Bearer authentication” can be understood as “give access to the bearer of this token.” The client must send this token in the `Authorization` header when making requests to protected resources.
+
+        - Example: `Authorization: Bearer <token>`
+
+        Where `<token>` should be replaced with the token string without angle brackets.
+
+        For more information, see the following guide: [Credentials](https://dev.bandwidth.com/docs/credentials)
+tags:
+  - name: Addresses
+  - name: Compliance
+  - name: Requirements Packages
+security:
+  - Basic: []
+  - Bearer: []

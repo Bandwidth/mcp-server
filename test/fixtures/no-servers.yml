@@ -1,0 +1,57 @@
+openapi: 3.0.3
+info:
+  title: Multi-Factor Authentication
+  description: Bandwidth's Two-Factor Authentication service
+  contact:
+    name: Bandwidth Support
+    email: support@bandwidth.com
+    url: https://support.bandwidth.com
+  termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
+  version: 3.1.0
+paths:
+  /code/verify:
+    post:
+      tags:
+        - MFA
+      summary: Verify Authentication Code
+      description: Verify a previously sent MFA code.
+      operationId: verifyCode
+      requestBody:
+        $ref: '#/components/requestBodies/codeVerify'
+      responses:
+        '200':
+          $ref: '#/components/responses/verifyCodeResponse'
+components:
+  schemas:
+    verifyCodeRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The generated mfa code to check if valid.
+          example: '123456'
+      required:
+        - code
+    verifyCodeResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: Whether or not the supplied code is valid.
+  responses:
+    verifyCodeResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verifyCodeResponse'
+  requestBodies:
+    codeVerify:
+      description: MFA code verify request body.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verifyCodeRequest'
+tags:
+  - name: MFA

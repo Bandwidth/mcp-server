@@ -2,10 +2,10 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   schemaVersion: v1.0.0
-  name: bandwidth-mcp-server
+  name: mcp-server
   description: Official Bandwidth MCP Server
   annotations:
-    github.com/project-slug: Bandwidth/bandwidth-mcp-server
+    github.com/project-slug: Bandwidth/mcp-server
   organization: BW
   costCenter: Development - Software Infra
   platformType: 

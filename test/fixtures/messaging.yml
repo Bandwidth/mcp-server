@@ -1,0 +1,2267 @@
+openapi: 3.0.3
+info:
+  title: Messaging
+  version: 4.3.0
+  contact:
+    name: Bandwidth
+    url: https://support.bandwidth.com
+    email: support@bandwidth.com
+  termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
+  description: |-
+    The API Specification for Bandwidth's Messaging Platform
+
+    ## Base URL
+
+    `https://messaging.bandwidth.com/api/v2`
+servers:
+  - url: https://messaging.bandwidth.com/api/v2
+    description: Production
+paths:
+  /users/{accountId}/media:
+    get:
+      summary: List Media
+      description: |-
+        Gets a list of your media files. No query parameters are supported.
+      operationId: listMedia
+      tags:
+        - Media
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/continuationToken"
+      responses:
+        "200":
+          $ref: "#/components/responses/listMediaResponse"
+        "400":
+          $ref: "#/components/responses/messagingBadRequestError"
+        "401":
+          $ref: "#/components/responses/messagingUnauthorizedError"
+        "403":
+          $ref: "#/components/responses/messagingForbiddenError"
+        "404":
+          $ref: "#/components/responses/messagingNotFoundError"
+        "406":
+          $ref: '#/components/responses/messagingNotAcceptableError'
+        "415":
+          $ref: "#/components/responses/messagingInvalidMediaTypeError"
+        "429":
+          $ref: "#/components/responses/messagingTooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/messagingInternalServerError"
+  /users/{accountId}/media/{mediaId}:
+    get:
+      summary: Get Media
+      description: Downloads a media file you previously uploaded.
+      operationId: getMedia
+      tags:
+        - Media
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/mediaId"
+      responses:
+        "200":
+          $ref: "#/components/responses/getMediaResponse"
+        "400":
+          $ref: "#/components/responses/messagingBadRequestError"
+        "401":
+          $ref: "#/components/responses/messagingUnauthorizedError"
+        "403":
+          $ref: "#/components/responses/messagingForbiddenError"
+        "404":
+          $ref: "#/components/responses/messagingNotFoundError"
+        "406":
+          $ref: '#/components/responses/messagingNotAcceptableError'
+        "415":
+          $ref: "#/components/responses/messagingInvalidMediaTypeError"
+        "429":
+          $ref: "#/components/responses/messagingTooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/messagingInternalServerError"
+    put:
+      summary: Upload Media
+      description: |-
+        Upload a file. You may add headers to the request in order to provide some control to your media file.
+
+        If a file is uploaded with the same name as a file that already exists under this account, the previous file will be overwritten.
+
+        A list of supported media types can be found [here](https://support.bandwidth.com/hc/en-us/articles/360014128994-What-MMS-file-types-are-supported-).
+      operationId: uploadMedia
+      tags:
+        - Media
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/mediaId"
+        - $ref: "#/components/parameters/contentType"
+        - $ref: "#/components/parameters/cacheControl"
+      requestBody:
+        $ref: "#/components/requestBodies/uploadMediaRequest"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          $ref: "#/components/responses/messagingBadRequestError"
+        "401":
+          $ref: "#/components/responses/messagingUnauthorizedError"
+        "403":
+          $ref: "#/components/responses/messagingForbiddenError"
+        "404":
+          $ref: "#/components/responses/messagingNotFoundError"
+        "406":
+          $ref: '#/components/responses/messagingNotAcceptableError'
+        "415":
+          $ref: "#/components/responses/messagingInvalidMediaTypeError"
+        "429":
+          $ref: "#/components/responses/messagingTooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/messagingInternalServerError"
+    delete:
+      summary: Delete Media
+      description: |-
+        Deletes a media file from Bandwidth API server. Make sure you don't have
+        any application scripts still using the media before you delete.
+
+        If you accidentally delete a media file you can immediately upload a new
+        file with the same name.
+      operationId: deleteMedia
+      tags:
+        - Media
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/mediaId"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          $ref: "#/components/responses/messagingBadRequestError"
+        "401":
+          $ref: "#/components/responses/messagingUnauthorizedError"
+        "403":
+          $ref: "#/components/responses/messagingForbiddenError"
+        "404":
+          $ref: "#/components/responses/messagingNotFoundError"
+        "406":
+          $ref: '#/components/responses/messagingNotAcceptableError'
+        "415":
+          $ref: "#/components/responses/messagingInvalidMediaTypeError"
+        "429":
+          $ref: "#/components/responses/messagingTooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/messagingInternalServerError"
+  /users/{accountId}/messages:
+    get:
+      summary: List Messages
+      description: Returns a list of messages based on query parameters.
+      operationId: listMessages
+      tags:
+        - Messages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/messageId"
+        - $ref: "#/components/parameters/sourceTn"
+        - $ref: "#/components/parameters/destinationTn"
+        - $ref: "#/components/parameters/messageStatus"
+        - $ref: "#/components/parameters/messageDirection"
+        - $ref: "#/components/parameters/carrierName"
+        - $ref: "#/components/parameters/messageType"
+        - $ref: "#/components/parameters/errorCode"
+        - $ref: "#/components/parameters/fromDateTime"
+        - $ref: "#/components/parameters/toDateTime"
+        - $ref: "#/components/parameters/campaignId"
+        - $ref: "#/components/parameters/fromBwLatency"
+        - $ref: "#/components/parameters/bwQueued"
+        - $ref: "#/components/parameters/product"
+        - $ref: "#/components/parameters/location"
+        - $ref: "#/components/parameters/callingNumberCountryA3"
+        - $ref: "#/components/parameters/calledNumberCountryA3"
+        - $ref: "#/components/parameters/fromSegmentCount"
+        - $ref: "#/components/parameters/toSegmentCount"
+        - $ref: "#/components/parameters/fromMessageSize"
+        - $ref: "#/components/parameters/toMessageSize"
+        - $ref: "#/components/parameters/sort"
+        - $ref: "#/components/parameters/pageToken"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/limitTotalCount"
+      responses:
+        "200":
+          $ref: "#/components/responses/listMessagesResponse"
+        "400":
+          $ref: "#/components/responses/messagingBadRequestError"
+        "401":
+          $ref: "#/components/responses/messagingUnauthorizedError"
+        "403":
+          $ref: "#/components/responses/messagingForbiddenError"
+        "404":
+          $ref: "#/components/responses/messagingNotFoundError"
+        "415":
+          $ref: "#/components/responses/messagingInvalidMediaTypeError"
+        "429":
+          $ref: "#/components/responses/messagingTooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/messagingInternalServerError"
+    post:
+      summary: Create Message
+      description: Endpoint for sending text messages and picture messages using V2 messaging.
+      operationId: createMessage
+      tags:
+        - Messages
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/createMessageRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/createMessageResponse"
+        "400":
+          $ref: "#/components/responses/createMessageBadRequestError"
+        "401":
+          $ref: "#/components/responses/messagingUnauthorizedError"
+        "403":
+          $ref: "#/components/responses/messagingForbiddenError"
+        "404":
+          $ref: "#/components/responses/messagingNotFoundError"
+        "405":
+          $ref: "#/components/responses/messagingMethodNotAllowedError"
+        "406":
+          $ref: '#/components/responses/messagingNotAcceptableError'
+        "415":
+          $ref: "#/components/responses/messagingInvalidMediaTypeError"
+        "429":
+          $ref: "#/components/responses/messagingTooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/messagingInternalServerError"
+      callbacks:
+        statusCallback:
+          $ref: "#/components/callbacks/statusCallback"
+  /users/{accountId}/messages/multiChannel:
+    post:
+      summary: Create Multi-Channel Message
+      description: Endpoint for sending Multi-Channel messages.
+      operationId: createMultiChannelMessage
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+      tags:
+          - Multi-Channel
+      requestBody:
+        $ref: "#/components/requestBodies/createMultiChannelMessageRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/createMultiChannelMessageResponse"
+        "400":
+          $ref: "#/components/responses/multiChannelBadRequestError"
+        "401":
+          $ref: "#/components/responses/multiChannelUnauthorizedError"
+        "403":
+          $ref: "#/components/responses/multiChannelForbiddenError"
+        "404":
+          $ref: "#/components/responses/multiChannelNotFoundError"
+        "405":
+          $ref: "#/components/responses/multiChannelMethodNotAllowedError"
+        "406":
+          $ref: '#/components/responses/multiChannelNotAcceptableError'
+        "415":
+          $ref: "#/components/responses/multiChannelInvalidMediaTypeError"
+        "429":
+          $ref: "#/components/responses/multiChannelTooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/multiChannelInternalServerError"
+      callbacks:
+        statusCallback:
+          $ref: "#/components/callbacks/statusCallback"
+      x-badges:
+        - name: Beta
+          color: '#076EA8'
+components:
+  parameters:
+    accountId:
+      in: path
+      name: accountId
+      required: true
+      schema:
+        type: string
+      description: Your Bandwidth Account ID.
+      example: "9900000"
+    mediaId:
+      in: path
+      name: mediaId
+      required: true
+      description: Media ID to retrieve.
+      example: 14762070468292kw2fuqty55yp2b2/0/bw.png
+      schema:
+        type: string
+    contentType:
+      in: header
+      name: Content-Type
+      style: simple
+      explode: false
+      description: The media type of the entity-body.
+      example: audio/wav
+      schema:
+        type: string
+    cacheControl:
+      in: header
+      name: Cache-Control
+      style: simple
+      explode: false
+      description: >-
+        General-header field is used to specify directives that MUST be obeyed by
+        all caching mechanisms along the request/response chain.
+      example: no-cache
+      schema:
+        type: string
+    continuationToken:
+      in: header
+      name: Continuation-Token
+      description: Continuation token used to retrieve subsequent media.
+      example: "1XEi2tsFtLo1JbtLwETnM1ZJ+PqAa8w6ENvC5QKvwyrCDYII663Gy5M4s40owR1tjkuWUif6qbWvFtQJR5/ipqbUnfAqL254LKNlPy6tATCzioKSuHuOqgzloDkSwRtX0LtcL2otHS69hK343m+SjdL+vlj71tT39"
+      schema:
+        type: string
+    messageId:
+      in: query
+      name: messageId
+      required: false
+      description: >-
+        The ID of the message to search for. Special characters need to be
+        encoded using URL encoding. Message IDs could come in different formats,
+        e.g., 9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6 and
+        1589228074636lm4k2je7j7jklbn2 are valid message ID formats. Note that you
+        must include at least one query parameter.
+      example: 9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6
+      schema:
+        type: string
+    sourceTn:
+      in: query
+      name: sourceTn
+      required: false
+      description: >-
+        The phone number that sent the message. Accepted values are: a single
+        full phone number a comma separated list of full phone numbers (maximum
+        of 10) or a single partial phone number (minimum of 5 characters e.g.
+        '%2B1919').
+      example: "%2B15554443333"
+      schema:
+        type: string
+    destinationTn:
+      in: query
+      name: destinationTn
+      required: false
+      description: >-
+        The phone number that received the message. Accepted values are: a single
+        full phone number a comma separated list of full phone numbers (maximum
+        of 10) or a single partial phone number (minimum of 5 characters e.g.
+        '%2B1919').
+      example: "%2B15554443333"
+      schema:
+        type: string
+    messageStatus:
+      in: query
+      name: messageStatus
+      required: false
+      description: >-
+        The status of the message. One of RECEIVED QUEUED SENDING SENT FAILED
+        DELIVERED ACCEPTED UNDELIVERED.
+      schema:
+        $ref: "#/components/schemas/messageStatusEnum"
+    messageDirection:
+      in: query
+      name: messageDirection
+      required: false
+      description: The direction of the message. One of INBOUND OUTBOUND.
+      schema:
+        $ref: "#/components/schemas/listMessageDirectionEnum"
+    carrierName:
+      in: query
+      name: carrierName
+      required: false
+      description: >-
+        The name of the carrier used for this message. Possible values include
+        but are not limited to Verizon and TMobile. Special characters need to
+        be encoded using URL encoding (i.e. AT&T should be passed as AT%26T).
+      example: Verizon
+      schema:
+        type: string
+    messageType:
+      in: query
+      name: messageType
+      required: false
+      description: The type of message. Either sms or mms.
+      schema:
+        $ref: "#/components/schemas/messageTypeEnum"
+    errorCode:
+      in: query
+      name: errorCode
+      required: false
+      description: The error code of the message.
+      example: 9902
+      schema:
+        type: integer
+    fromDateTime:
+      in: query
+      name: fromDateTime
+      required: false
+      description: >-
+        The start of the date range to search in ISO 8601 format. Uses the
+        message receive time. The date range to search in is currently 14 days.
+      example: 2022-09-14T18:20:16.000Z
+      schema:
+        type: string
+    toDateTime:
+      in: query
+      name: toDateTime
+      required: false
+      description: >-
+        The end of the date range to search in ISO 8601 format. Uses the message
+        receive time. The date range to search in is currently 14 days.
+      example: 2022-09-14T18:20:16.000Z
+      schema:
+        type: string
+    campaignId:
+      in: query
+      name: campaignId
+      required: false
+      description: The campaign ID of the message.
+      example: CJEUMDK
+      schema:
+        type: string
+    fromBwLatency:
+      in: query
+      name: fromBwLatency
+      required: false
+      description: >-
+          The minimum Bandwidth latency of the message in seconds. Only available for accounts with the Advanced Quality Metrics feature enabled.
+      example: 5
+      schema:
+        type: integer
+    bwQueued:
+      in: query
+      name: bwQueued
+      required: false
+      description: >-
+        A boolean value indicating whether the message is queued in the Bandwidth network.
+      example: true
+      schema:
+        type: boolean
+    product:
+      in: query
+      name: product
+      required: false
+      description: Messaging product associated with the message.
+      example: 'P2P'
+      schema:
+        $ref: "#/components/schemas/productTypeEnum"
+    location:
+      in: query
+      name: location
+      required: false
+      description: Location Id associated with the message.
+      example: '123ABC'
+      schema:
+        type: string
+    callingNumberCountryA3:
+      in: query
+      name: callingNumberCountryA3
+      required: false
+      description: Calling number country in A3 format.
+      example: 'USA'
+      schema:
+        type: string
+    calledNumberCountryA3:
+      in: query
+      name: calledNumberCountryA3
+      required: false
+      description: Called number country in A3 format.
+      example: 'USA'
+      schema:
+        type: string
+    fromSegmentCount:
+      in: query
+      name: fromSegmentCount
+      required: false
+      description: Segment count (start range).
+      example: 1
+      schema:
+        type: integer
+    toSegmentCount:
+      in: query
+      name: toSegmentCount
+      required: false
+      description: Segment count (end range).
+      example: 3
+      schema:
+        type: integer
+    fromMessageSize:
+      in: query
+      name: fromMessageSize
+      required: false
+      description: Message size (start range).
+      example: 100
+      schema:
+        type: integer
+    toMessageSize:
+      in: query
+      name: toMessageSize
+      required: false
+      description: Message size (end range).
+      example: 120
+      schema:
+        type: integer
+    sort:
+      in: query
+      name: sort
+      required: false
+      description: The field and direction to sort by combined with a colon. Direction is either asc or desc.
+      example: sourceTn:desc
+      schema:
+        type: string
+    pageToken:
+      in: query
+      name: pageToken
+      required: false
+      description: A base64 encoded value used for pagination of results.
+      example: gdEewhcJLQRB5
+      schema:
+        type: string
+    limit:
+      in: query
+      name: limit
+      required: false
+      description: >-
+        The maximum records requested in search result. Default 100. The sum of
+        limit and after cannot be more than 10000.
+      schema:
+        type: integer
+      example: 50
+    limitTotalCount:
+      in: query
+      name: limitTotalCount
+      required: false
+      description: When set to true, the response's totalCount field will have a maximum value of
+        10,000. When set to false, or excluded, this will give an accurate totalCount of all
+        messages that match the provided filters. If you are experiencing latency, try using this
+        parameter to limit your results.
+      example: true
+      schema:
+        type: boolean
+  schemas:
+    applicationId:
+      type: string
+      description: The ID of the Application your from number or senderId is associated with in the Bandwidth Phone Number Dashboard.
+      example: 93de2206-9669-4e07-948d-329f4b722ee2
+    priorityEnum:
+      type: string
+      description: >-
+        Specifies the message's sending priority with respect to other messages in your account.
+        For best results and optimal throughput, reserve the 'high' priority setting for critical messages only.
+      enum:
+        - default
+        - high
+      example: default
+    messageStatusEnum:
+      type: string
+      description: >-
+        The status of the message. One of RECEIVED QUEUED SENDING SENT FAILED
+        DELIVERED ACCEPTED UNDELIVERED.
+      enum:
+        - RECEIVED
+        - QUEUED
+        - SENDING
+        - SENT
+        - FAILED
+        - DELIVERED
+        - ACCEPTED
+        - UNDELIVERED
+      example: "RECEIVED"
+    listMessageDirectionEnum:
+      type: string
+      description: The direction of the message. One of INBOUND OUTBOUND.
+      enum:
+        - INBOUND
+        - OUTBOUND
+      example: INBOUND
+    messageDirectionEnum:
+      type: string
+      description: The direction of the message. One of in out.
+      enum:
+        - in
+        - out
+      example: in
+    messageTypeEnum:
+      type: string
+      description: The type of message. Either SMS or MMS.
+      enum:
+        - sms
+        - mms
+        - rcs
+      example: 'sms'
+    productTypeEnum:
+      type: string
+      description: The type of product associated with the message.
+      enum:
+        - LOCAL_A2P
+        - P2P
+        - SHORT_CODE_REACH
+        - TOLL_FREE
+        - HOSTED_SHORT_CODE
+        - ALPHA_NUMERIC
+        - RBM_MEDIA
+        - RBM_RICH
+        - RBM_CONVERSATIONAL
+      example: 'P2P'
+    fieldError:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The name of the field that contains the error
+          example: from
+        description:
+          type: string
+          description: The error associated with the field
+          example: "'+invalid' must be replaced with a valid E164 formatted telephone number"
+    messagesList:
+      title: MessagesList
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          description: The total number of messages matched by the search. When the request has limitTotalCount set to true this value is limited to 10,000.
+          example: 100
+        pageInfo:
+          $ref: "#/components/schemas/pageInfo"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/listMessageItem"
+    listMessageItem:
+      title: listMessageItem
+      type: object
+      properties:
+        messageId:
+          type: string
+          description: The message id
+          example: 1589228074636lm4k2je7j7jklbn2
+        accountId:
+          type: string
+          description: The account id associated with this message.
+          example: "9900000"
+        sourceTn:
+          type: string
+          description: The source phone number of the message.
+          example: "+15554443333"
+        destinationTn:
+          type: string
+          description: The recipient phone number of the message.
+          example: "+15554442222"
+        messageStatus:
+          $ref: "#/components/schemas/messageStatusEnum"
+        messageDirection:
+          $ref: "#/components/schemas/listMessageDirectionEnum"
+        messageType:
+          $ref: "#/components/schemas/messageTypeEnum"
+        segmentCount:
+          $ref: "#/components/schemas/segmentCount"
+        errorCode:
+          type: integer
+          description: The numeric error code of the message.
+          example: 9902
+        receiveTime:
+          type: string
+          format: date-time
+          description: The ISO 8601 datetime of the message.
+          example: 2020-04-07T14:03:07.000Z
+        carrierName:
+          type: string
+          nullable: true
+          description: The name of the carrier. Not currently supported for MMS coming soon.
+          example: other
+        messageSize:
+          type: integer
+          description: The size of the message including message content and headers.
+          nullable: true
+          example: 27
+        messageLength:
+          type: integer
+          description: The length of the message content.
+          example: 18
+        attachmentCount:
+          type: integer
+          description: The number of attachments the message has.
+          nullable: true
+          example: 1
+        recipientCount:
+          type: integer
+          description: The number of recipients the message has.
+          nullable: true
+          example: 1
+        campaignClass:
+          type: string
+          description: The campaign class of the message if it has one.
+          nullable: true
+          example: T
+        campaignId:
+          type: string
+          description: The campaign ID of the message if it has one.
+          nullable: true
+          example: CJEUMDK
+        bwLatency:
+          type: integer
+          description: The Bandwidth latency of the message in seconds. Only available for accounts with the Advanced Quality Metrics feature enabled.
+          nullable: true
+          example: 20
+        callingNumberCountryA3:
+          type: string
+          description: The A3 country code of the calling number.
+          nullable: true
+          example: 'USA'
+        calledNumberCountryA3:
+          type: string
+          description: The A3 country code of the called number.
+          nullable: true
+          example: 'USA'
+        product:
+          type: string
+          description: The messaging product associated with the message.
+          nullable: true
+          example: 'P2P'
+        location:
+          type: string
+          description: The location ID associated with this message.
+          nullable: true
+          example: '123ID'
+    pageInfo:
+      title: PageInfo
+      type: object
+      properties:
+        prevPage:
+          type: string
+          description: The link to the previous page for pagination.
+          example: https://messaging.bandwidth.com/api/v2/users/accountId/messages?messageStatus=DLR_EXPIRED&nextPage=DLAPE902
+        nextPage:
+          type: string
+          description: The link to the next page for pagination.
+          example: https://messaging.bandwidth.com/api/v2/users/accountId/messages?messageStatus=DLR_EXPIRED&prevPage=GL83PD3C
+        prevPageToken:
+          type: string
+          description: The isolated pagination token for the previous page.
+          example: DLAPE902
+        nextPageToken:
+          type: string
+          description: The isolated pagination token for the next page.
+          example: GL83PD3C
+    messagingRequestError:
+      title: MessagingRequestError
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+      required:
+        - type
+        - description
+    createMessageRequestError:
+      title: CreateMessageRequestError
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        fieldErrors:
+          type: array
+          items:
+            $ref: "#/components/schemas/fieldError"
+      required:
+        - type
+        - description
+    messageId:
+      type: string
+      description: The ID of the message.
+      example: 1589228074636lm4k2je7j7jklbn2
+    media:
+      title: Media
+      type: object
+      properties:
+        content:
+          type: string
+        contentLength:
+          type: integer
+        mediaName:
+          type: string
+    segmentCount:
+      type: integer
+      description: The number of segments the user's message is broken into before sending over carrier networks.
+      example: 1
+    tag:
+      title: Tag
+      type: string
+      description: A custom string that will be included in callback events of the message. Max 1024 characters.
+      example: custom string
+    expiration:
+      type: string
+      format: date-time
+      description: >-
+        A string with the date/time value that the message will automatically
+        expire by. This must be a valid RFC-3339 value, e.g.,
+        2021-03-14T01:59:26Z or 2021-03-13T20:59:26-05:00. Must be a date-time in the future.
+      example: "2021-02-01T11:29:18-05:00"
+    carrierName:
+      type: string
+      description: |-
+        The name of the Authorized Message Provider (AMP) that handled this message. 
+        In the US, this is the carrier that the message was sent to.
+        This field is present only when this account feature has been enabled.
+      example: AT&T
+    message:
+      title: Message
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the message.
+          example: 1589228074636lm4k2je7j7jklbn2
+        owner:
+          type: string
+          description: The Bandwidth phone number associated with the message.
+          example: "+15554443333"
+        applicationId:
+          $ref: "#/components/schemas/applicationId"
+        time:
+          type: string
+          format: date-time
+          description: The datetime stamp of the message in ISO 8601
+          example: 2024-12-02T20:15:57.278201Z
+        segmentCount:
+          $ref: "#/components/schemas/segmentCount"
+        direction:
+          $ref: "#/components/schemas/messageDirectionEnum"
+        to:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          description: The phone number recipients of the message.
+          example:
+            - "+15552223333"
+        from:
+          type: string
+          description: The phone number the message was sent from.
+          example: "+15553332222"
+        media:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          description: >-
+            The list of media URLs sent in the message. Including a `filename`
+            field in the `Content-Disposition` header of the media linked with
+            a URL will set the displayed file name. This is a best practice to
+            ensure that your media has a readable file name.
+          example:
+            - https://dev.bandwidth.com/images/bandwidth-logo.png
+        text:
+          type: string
+          description: The contents of the message.
+          example: Hello world
+        tag:
+          $ref: "#/components/schemas/tag"
+        priority:
+          $ref: "#/components/schemas/priorityEnum"
+        expiration:
+          $ref: "#/components/schemas/expiration"
+    messageRequest:
+      title: MessageRequest
+      type: object
+      required:
+        - applicationId
+        - to
+        - from
+      properties:
+        applicationId:
+          $ref: "#/components/schemas/applicationId"
+        to:
+          uniqueItems: true
+          type: array
+          description: The phone number(s) the message should be sent to in E164 format.
+          example:
+            - "+15554443333"
+            - "+15552223333"
+          items:
+            type: string
+        from:
+          type: string
+          description: >-
+            Either an alphanumeric sender ID or the sender's Bandwidth phone number in E.164 format, which must be hosted within Bandwidth and linked to the account that is generating the message. 
+            
+            Alphanumeric Sender IDs can contain up to 11 characters, upper-case letters A-Z, lower-case letters a-z, numbers 0-9, space, hyphen -, plus +, underscore _ and ampersand &.
+            Alphanumeric Sender IDs must contain at least one letter.
+          example:
+            "+15551113333"
+        text:
+          $ref: "#/components/schemas/messageText"
+        media:
+          $ref: "#/components/schemas/messageMedia"
+        tag:
+          $ref: "#/components/schemas/tag"
+        priority:
+          $ref: "#/components/schemas/priorityEnum"
+        expiration:
+          $ref: "#/components/schemas/expiration"
+    messageText:
+      type: string
+      description: The contents of the text message. Must be 2048 characters or less.
+      maxLength: 2048
+      example: Hello world
+    messageMedia:
+      type: array
+      items:
+        type: string
+        format: uri
+        maxLength: 4096
+      description: >-
+        A list of URLs to include as media attachments as part of the message.
+        
+        Each URL can be at most 4096 characters.
+      example:
+        - https://dev.bandwidth.com/images/bandwidth-logo.png
+        - https://dev.bandwidth.com/images/github_logo.png
+    createMultiChannelMessageResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+          example: []
+        data:
+          $ref: "#/components/schemas/multiChannelMessageResponseData"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/errorObject"
+          example: []
+    multiChannelError:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/link"
+          example: []
+        data:
+          type: object
+          nullable: true
+          example: null
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/errorObject"
+    link:
+      type: object
+      properties:
+        rel:
+          type: string
+        href:
+          type: string
+    errorObject:
+      type: object
+      properties:
+        type:
+          description: A concise summary of the error used for categorization.
+          type: string
+        description:
+          description: A detailed explanation of the error.
+          type: string
+        source:
+          $ref: "#/components/schemas/errorSource"
+      required:
+        - type
+        - description
+        - source
+    errorSource:
+      title: Error Source
+      type: object
+      description: Specifies relevant sources of the error, if any.
+      properties:
+        parameter:
+          type: string
+          description: The relevant URI query parameter causing the error
+        field:
+          type: string
+          description: The request body field that led to the error
+        header:
+          type: string
+          description: The header field that contributed to the error
+        reference:
+          type: string
+          description: A resource ID or path linked to the error
+    multiChannelMessageChannelEnum:
+      description: The channel of the multi-channel message.
+      type: string
+      enum:
+        - RBM
+        - SMS
+        - MMS
+      example: RBM
+    multiChannelSenderId:
+      type: string
+      description: The sender ID of the message. This could be an alphanumeric sender ID.
+      example: "BandwidthRBM"
+    multiChannelDestination:
+      type: string
+      description: The phone number the message should be sent to in E164 format.
+      example: "+15552223333"
+    multiChannelDestinations:
+      uniqueItems: true
+      type: array
+      description: The destination phone number(s) of the message, in E164 format.
+      example:
+        - "+15554443333"
+      items:
+        type: string
+    rbmMessageContentText:
+      title: RBM Text
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text associated with the message. Must be 3270 characters or less
+          maxLength: 3270
+          example: Hello world
+        suggestions:
+          $ref: "#/components/schemas/multiChannelFullActions"
+      required:
+        - text
+    rbmMediaHeightEnum:
+      type: string
+      description: The height of the media.
+      enum:
+        - SHORT
+        - MEDIUM
+        - TALL
+      example: SHORT
+    rbmMessageContentFile:
+      title: RBM Rich Media File
+      type: object
+      properties:
+        fileUrl:
+          type: string
+          format: uri
+          description: The URL of the media file. 100MB is the maximum file size.
+          example: https://dev.bandwidth.com/images/bandwidth-logo.png
+          maxLength: 1000
+        thumbnailUrl:
+          type: string
+          format: uri
+          description: The URL of the thumbnail image. Applies only to video file media.
+          example: https://dev.bandwidth.com/images/bandwidth-logo.png
+          maxLength: 1000
+      required:
+        - fileUrl
+    mmsMessageContentFile:
+      title: MMS Media File
+      type: object
+      properties:
+        fileUrl:
+          type: string
+          format: uri
+          description: >-
+            The URL of a media attachment.
+
+
+            For MMS, the API limits file size to 3.5MB.
+            Specific carriers and channels may have a smaller limit that could cause a large file to fail, see
+            [here](https://support.bandwidth.com/hc/en-us/articles/360014235473-What-are-the-MMS-file-size-limits)
+            for more details.
+          example: https://dev.bandwidth.com/images/bandwidth-logo.png
+          maxLength: 1000
+      required:
+        - fileUrl
+    rbmMessageMedia:
+      title: RBM Media
+      type: object
+      properties:
+        media:
+          $ref: "#/components/schemas/rbmMessageContentFile"
+        suggestions:
+          $ref: "#/components/schemas/multiChannelFullActions"
+      required:
+        - media
+    rbmCardContent:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the card. Must be 200 characters or less.
+          maxLength: 200
+          example: "Bandwidth"
+        description:
+          type: string
+          description: The description of the card. Must be 2000 characters or less.
+          maxLength: 2000
+          example: "Bandwidth is a communications platform as a service (CPaaS) company."
+        media:
+          allOf:
+            - $ref: "#/components/schemas/rbmMessageContentFile"
+            - type: object
+              properties:
+                height:
+                  $ref: "#/components/schemas/rbmMediaHeightEnum"
+          required:
+            - height
+        suggestions:
+          description: An array of suggested actions for the recipient that will be displayed on the rich card.
+          type: array
+          items:
+            $ref: "#/components/schemas/multiChannelAction"
+          maxItems: 4
+    rbmStandaloneCard:
+      title: Standalone Card
+      type: object
+      properties:
+        orientation:
+          $ref: "#/components/schemas/standaloneCardOrientationEnum"
+        thumbnailImageAlignment:
+          $ref: "#/components/schemas/thumbnailAlignmentEnum"
+        cardContent:
+          $ref: "#/components/schemas/rbmCardContent"
+        suggestions:
+          $ref: "#/components/schemas/multiChannelFullActions"
+      required:
+        - orientation
+        - thumbnailImageAlignment
+        - cardContent
+    standaloneCardOrientationEnum:
+      type: string
+      enum:
+        - HORIZONTAL
+        - VERTICAL
+      example: VERTICAL
+    thumbnailAlignmentEnum:
+      type: string
+      description: >-
+        The alignment of the thumbnail image in the card. Only applicable if
+        the card using horizontal orientation.
+      enum:
+        - LEFT
+        - RIGHT
+      example: LEFT
+    rbmMessageCarouselCard:
+      title: Carousel
+      type: object
+      properties:
+        cardWidth:
+          $ref: "#/components/schemas/cardWidthEnum"
+        cardContents:
+          type: array
+          items:
+            $ref: "#/components/schemas/rbmCardContent"
+          maxItems: 10
+        suggestions:
+          $ref: "#/components/schemas/multiChannelFullActions"
+      required:
+        - cardContents
+        - cardWidth
+    cardWidthEnum:
+      type: string
+      enum:
+        - SMALL
+        - MEDIUM
+      example: SMALL
+    smsMessageContent:
+      title: SMS Text
+      type: object
+      properties:
+        text:
+          $ref: "#/components/schemas/messageText"
+      required:
+        - text
+    mmsMessageContent:
+      title: MMS Message
+      type: object
+      properties:
+        text:
+          $ref: "#/components/schemas/messageText"
+        media:
+          type: array
+          items:
+            $ref: "#/components/schemas/mmsMessageContentFile"
+    rbmMessageContentRichCard:
+      title: RBM Rich Card
+      oneOf:
+        - $ref: "#/components/schemas/rbmStandaloneCard"
+        - $ref: "#/components/schemas/rbmMessageCarouselCard"
+    rbmActionTypeEnum:
+      type: string
+      enum:
+        - REPLY
+        - DIAL_PHONE
+        - SHOW_LOCATION
+        - CREATE_CALENDAR_EVENT
+        - OPEN_URL
+        - REQUEST_LOCATION
+      example: REPLY
+    rbmActionText:
+      title: Text
+      type: string
+      description: Displayed text for user to click
+      maxLength: 25
+      example: Hello world
+    rbmActionPostbackData:
+      title: Post Back Data
+      type: string
+      format: byte
+      description: Base64 payload the customer receives when the reply is clicked.
+      maxLength: 2048
+      example: SGVsbG8gd29ybGQ=
+    rbmActionBase:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/rbmActionTypeEnum'
+        text:
+          $ref: "#/components/schemas/rbmActionText"
+        postbackData:
+          $ref: "#/components/schemas/rbmActionPostbackData"
+      required:
+        - text
+        - postbackData
+        - type
+    rbmActionDial:
+      allOf:
+        - $ref: "#/components/schemas/rbmActionBase"
+        - title: Dial Phone
+          type: object
+          properties:
+            phoneNumber:
+              type: string
+              description: The phone number to dial. Must be E164 format.
+              example: "+15552223333"
+          required:
+            - phoneNumber
+    rbmActionViewLocation:
+      allOf:
+        - $ref: "#/components/schemas/rbmActionBase"
+        - title: Show Location
+          type: object
+          properties:
+            latitude:
+              type: string
+              format: double
+              description: The latitude of the location.
+              example: "37.7749"
+            longitude:
+              type: string
+              format: double
+              description: The longitude of the location.
+              example: "-122.4194"
+            label:
+              type: string
+              description: The label of the location.
+              example: "San Francisco"
+              maxLength: 100
+          required:
+            - latitude
+            - longitude
+    multiChannelActionCalendarEvent:
+      allOf:
+        - $ref: "#/components/schemas/rbmActionBase"
+        - title: Calendar Event
+          type: object
+          properties:
+            title:
+              type: string
+              description: The title of the event.
+              example: "Meeting with John"
+              maxLength: 100
+            startTime:
+              type: string
+              format: date-time
+              description: The start time of the event.
+              example: 2022-09-14T18:20:16.000Z
+            endTime:
+              type: string
+              format: date-time
+              description: The end time of the event.
+              example: 2022-09-14T18:20:16.000Z
+            description:
+              type: string
+              description: The description of the event.
+              example: "Discuss the new project"
+              maxLength: 500
+          required:
+            - title
+            - startTime
+            - endTime
+    rbmActionOpenUrl:
+      allOf:
+        - $ref: "#/components/schemas/rbmActionBase"
+        - title: Open URL
+          type: object
+          properties:
+            url:
+              type: string
+              format: uri
+              description: The URL to open in browser.
+              example: https://dev.bandwidth.com
+              maxLength: 2048
+          required:
+            - url
+    multiChannelFullActions:
+      type: array
+      description: An array of suggested actions for the recipient.
+      items:
+        $ref: "#/components/schemas/multiChannelAction"
+      maxItems: 11
+    multiChannelAction:
+      oneOf:
+        - $ref: "#/components/schemas/rbmActionBase"
+        - $ref: "#/components/schemas/rbmActionDial"
+        - $ref: "#/components/schemas/rbmActionViewLocation"
+        - $ref: "#/components/schemas/multiChannelActionCalendarEvent"
+        - $ref: "#/components/schemas/rbmActionOpenUrl"
+      discriminator:
+        propertyName: type
+        mapping:
+          REPLY: "#/components/schemas/rbmActionBase"
+          DIAL_PHONE: "#/components/schemas/rbmActionDial"
+          SHOW_LOCATION: "#/components/schemas/rbmActionViewLocation"
+          CREATE_CALENDAR_EVENT: "#/components/schemas/multiChannelActionCalendarEvent"
+          OPEN_URL: "#/components/schemas/rbmActionOpenUrl"
+          REQUEST_LOCATION: "#/components/schemas/rbmActionBase"
+    multiChannelChannelListObject:
+      type: object
+      properties:
+        from:
+          $ref: "#/components/schemas/multiChannelSenderId"
+        applicationId:
+          $ref: "#/components/schemas/applicationId"
+        channel:
+            $ref: "#/components/schemas/multiChannelMessageChannelEnum"
+        content:
+          description: The content of the message.
+          oneOf:
+            - $ref: "#/components/schemas/rbmMessageContentText"
+            - $ref: "#/components/schemas/rbmMessageMedia"
+            - $ref: "#/components/schemas/rbmMessageContentRichCard"
+            - $ref: '#/components/schemas/smsMessageContent'
+            - $ref: '#/components/schemas/mmsMessageContent'
+      required:
+        - from
+        - applicationId
+        - channel
+        - content
+    multiChannelMessageRequest:
+      description: Multi-Channel Message Request
+      type: object
+      properties:
+        to:
+          $ref: "#/components/schemas/multiChannelDestination"
+        channelList:
+          type: array
+          description: A list of message bodies. The messages will be attempted in the order they are listed. Once a message sends successfully, the others will be ignored.
+          items:
+            $ref: "#/components/schemas/multiChannelChannelListObject"
+          maxItems: 4
+        tag:
+          $ref: "#/components/schemas/tag"
+        priority:
+          $ref: "#/components/schemas/priorityEnum"
+        expiration:
+          $ref: "#/components/schemas/expiration"
+      required:
+        - to
+        - channelList
+    multiChannelMessageResponseData:
+      description: The data returned in a multichannel message response.
+      type: object
+      properties:
+        messageId:
+          $ref: "#/components/schemas/messageId"
+        time:
+          description: The time the message was received by the Bandwidth API.
+          type: string
+          format: date-time
+          example: 2025-01-01T18:20:16.000000Z
+        direction:
+          $ref: "#/components/schemas/messageDirectionEnum"
+        to:
+          $ref: "#/components/schemas/multiChannelDestinations"
+        channelList:
+          type: array
+          description: A list of message bodies. The messages will be attempted in the order they are listed. Once a message sends successfully, the others will be ignored.
+          items:
+            allOf:
+              - $ref: "#/components/schemas/multiChannelChannelListObject"
+              - type: object
+                properties:
+                  owner:
+                    type: string
+                    description: The Bandwidth senderId associated with the message. Identical to 'from'.
+                required:
+                  - owner
+          maxItems: 4
+        tag:
+          $ref: "#/components/schemas/tag"
+        priority:
+          $ref: "#/components/schemas/priorityEnum"
+        expiration:
+          $ref: "#/components/schemas/expiration"
+      required:
+        - messageId
+        - time
+        - direction
+        - to
+        - channelList
+    multiChannelMessageContent:
+      description: The structure of the content field of a multichannel message.
+      type: object
+      properties:
+        text:
+          type: string
+        media:
+          $ref: '#/components/schemas/rbmMessageContentFile'
+    rbmSuggestionResponse:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text associated with the suggestion response.
+          example: "Yes, I would like to proceed"
+        postbackData:
+          $ref: "#/components/schemas/rbmActionPostbackData"
+    rbmLocationResponse:
+      type: object
+      properties:
+        latitude:
+          type: string
+          format: double
+          description: The latitude of the client's location.
+          example: "37.7749"
+        longitude:
+          type: string
+          format: double
+          description: The longitude of the client's location.
+          example: "-122.4194"
+    callback:
+      description: |-
+        Callbacks are divided into two types based on direction of the related message:
+        - `statusCallback` indicates status of an outbound MT SMS, MMS, or RBM message.
+        - `inboundCallback` indicates an inbound MO message or a multichannel message client's response to a suggestion or location request.
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/statusCallback'
+        - $ref: '#/components/schemas/inboundCallback'
+      discriminator:
+        propertyName: type
+        mapping:
+          message-sent: '#/components/schemas/statusCallback'
+          message-delivered: '#/components/schemas/statusCallback'
+          message-failed: '#/components/schemas/statusCallback'
+          message-read: '#/components/schemas/statusCallback'
+          message-received: '#/components/schemas/inboundCallback'
+          request-location-response: '#/components/schemas/inboundCallback'
+          suggestion-response: '#/components/schemas/inboundCallback'
+    statusCallback:
+      type: object
+      description: Represents a status callback for an outbound MT SMS or MMS or RBM message.
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: 2024-12-02T20:15:57.278201Z
+        eventTime:
+          type: string
+          description: Represents the time at which the message was read, for `message-read` callbacks.
+          format: date-time
+          example: 2024-12-02T20:15:58.278205Z
+        type:
+          $ref: "#/components/schemas/statusCallbackTypeEnum"
+        to:
+          type: string
+          description: |-
+            The destination phone number the message was sent to.
+            For status callbacks, this the the Bandwidth user's client phone number.
+          example: "+15552223333"
+        description:
+          type: string
+          description: A detailed description of the event described by the callback.
+          example: Message delivered to carrier.
+        message:
+          $ref: '#/components/schemas/statusCallbackMessage'
+        errorCode:
+          type: integer
+          description: Optional error code, applicable only when type is `message-failed`.
+          example: 4405
+        carrierName:
+          $ref: "#/components/schemas/carrierName"
+      required:
+        - time
+        - type
+        - to
+        - description
+        - message
+    inboundCallback:
+      type: object
+      description: Represents an inbound callback.
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: 2024-12-02T20:15:57.278201Z
+        type:
+          $ref: "#/components/schemas/inboundCallbackTypeEnum"
+        to:
+          type: string
+          description: |
+            The destination phone number the message was sent to. 
+            For inbound callbacks, this is the Bandwidth number or alphanumeric identifier that received the message.
+          example: "+15552223333"
+        description:
+          type: string
+          description: A detailed description of the event described by the callback.
+          example: Incoming message received
+        message:
+          $ref: '#/components/schemas/inboundCallbackMessage'
+        carrierName:
+          $ref: "#/components/schemas/carrierName"
+      required:
+        - time
+        - type
+        - to
+        - description
+        - message
+    statusCallbackTypeEnum:
+      type: string
+      description: |-
+        The possible status callbacks when sending an MT SMS or MMS or RBM message:
+        - `message-sending` indicates that Bandwidth is sending the message to the upstream provider.
+        - `message-delivered` indicates that the message was successfully sent.
+        - `message-failed` indicates that the message could not be sent to the intended recipient.
+        - `message-read` indicates that the RBM message was read by the recipient.
+      enum:
+        - message-sending
+        - message-delivered
+        - message-failed
+        - message-read
+      example: message-delivered
+    inboundCallbackTypeEnum:
+      type: string
+      description: |-
+        The possible inbound callback types originating from MO messages or multichannel message client responses:
+        - `message-received` indicates an MO message from a Bandwidth user's client to a Bandwidth number.
+        - `request-location-response` indicates a response to a location request sent by the Bandwidth user's client after receiving an RBM message. 
+        - `suggestion-response` indicates a response to a suggestion sent by the Bandwidth user's client after receiving an RBM message.
+      enum:
+        - message-received
+        - request-location-response
+        - suggestion-response
+      example: message-received
+    statusCallbackMessage:
+      description: Message payload schema within a callback
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier of the message.
+          example: 1661365814859loidf7mcwd4qacn7
+        owner:
+          type: string
+          description: The Bandwidth phone number or alphanumeric identifier associated with the message.
+          example: "+15553332222"
+        applicationId:
+          $ref: "#/components/schemas/applicationId"
+        time:
+          type: string
+          format: date-time
+          example: 2024-12-02T20:15:57.666000Z
+        segmentCount:
+          $ref: "#/components/schemas/segmentCount"
+        direction:
+          $ref: "#/components/schemas/messageDirectionEnum"
+        to:
+          description: The phone number recipients of the message.
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          example:
+            - "+15552223333"
+        from:
+          type: string
+          description: The Bandwidth phone number or alphanumeric identifier the message was sent from.
+          example: "+15553332222"
+        text:
+          type: string
+          example: Hello world
+        tag:
+          $ref: "#/components/schemas/tag"
+        media:
+          type: array
+          description: Optional media, not applicable for sms
+          items:
+            type: string
+            format: uri
+          example:
+            - "https://dev.bandwidth.com/images/bandwidth-logo.png"
+            - "https://dev.bandwidth.com/images/github_logo.png"
+        priority:
+          $ref: "#/components/schemas/priorityEnum"
+        channel:
+          $ref: "#/components/schemas/multiChannelMessageChannelEnum"
+      required:
+        - id
+        - owner
+        - applicationId
+        - time
+        - segmentCount
+        - direction
+        - to
+        - from
+    inboundCallbackMessage:
+      allOf:
+        - $ref: "#/components/schemas/statusCallbackMessage"
+        - type: object
+          properties:
+            content:
+              $ref: "#/components/schemas/multiChannelMessageContent"
+            suggestionResponse:
+              $ref: "#/components/schemas/rbmSuggestionResponse"
+            locationResponse:
+              $ref: "#/components/schemas/rbmLocationResponse"
+      required:
+        - id
+        - owner
+        - applicationId
+        - time
+        - segmentCount
+        - direction
+        - to
+        - from
+  requestBodies:
+    createMessageRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messageRequest"
+      required: true
+    createMultiChannelMessageRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/multiChannelMessageRequest"
+      required: true
+    uploadMediaRequest:
+      content:
+        application/json:
+          schema:
+            type: string
+            format: binary
+        application/ogg:
+          schema:
+            type: string
+            format: binary
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+        application/rtf:
+          schema:
+            type: string
+            format: binary
+        application/zip:
+          schema:
+            type: string
+            format: binary
+        application/x-tar:
+          schema:
+            type: string
+            format: binary
+        application/xml:
+          schema:
+            type: string
+            format: binary
+        application/gzip:
+          schema:
+            type: string
+            format: binary
+        application/x-bzip2:
+          schema:
+            type: string
+            format: binary
+        application/x-gzip:
+          schema:
+            type: string
+            format: binary
+        application/smil:
+          schema:
+            type: string
+            format: binary
+        application/javascript:
+          schema:
+            type: string
+            format: binary
+        audio/mp4:
+          schema:
+            type: string
+            format: binary
+        audio/mpeg:
+          schema:
+            type: string
+            format: binary
+        audio/ogg:
+          schema:
+            type: string
+            format: binary
+        audio/flac:
+          schema:
+            type: string
+            format: binary
+        audio/webm:
+          schema:
+            type: string
+            format: binary
+        audio/wav:
+          schema:
+            type: string
+            format: binary
+        audio/amr:
+          schema:
+            type: string
+            format: binary
+        audio/3gpp:
+          schema:
+            type: string
+            format: binary
+        image/bmp:
+          schema:
+            type: string
+            format: binary
+        image/gif:
+          schema:
+            type: string
+            format: binary
+        image/heic:
+          schema:
+            type: string
+            format: binary
+        image/heif:
+          schema:
+            type: string
+            format: binary
+        image/jpeg:
+          schema:
+            type: string
+            format: binary
+        image/pjpeg:
+          schema:
+            type: string
+            format: binary
+        image/png:
+          schema:
+            type: string
+            format: binary
+        image/svg+xml:
+          schema:
+            type: string
+            format: binary
+        image/tiff:
+          schema:
+            type: string
+            format: binary
+        image/webp:
+          schema:
+            type: string
+            format: binary
+        image/x-icon:
+          schema:
+            type: string
+            format: binary
+        text/css:
+          schema:
+            type: string
+            format: binary
+        text/csv:
+          schema:
+            type: string
+            format: binary
+        text/calendar:
+          schema:
+            type: string
+            format: binary
+        text/html:
+          schema:
+            type: string
+            format: binary
+        text/plain:
+          schema:
+            type: string
+            format: binary
+        text/javascript:
+          schema:
+            type: string
+            format: binary
+        text/vcard:
+          schema:
+            type: string
+            format: binary
+        text/vnd.wap.wml:
+          schema:
+            type: string
+            format: binary
+        text/xml:
+          schema:
+            type: string
+            format: binary
+        video/avi:
+          schema:
+            type: string
+            format: binary
+        video/mp4:
+          schema:
+            type: string
+            format: binary
+        video/mpeg:
+          schema:
+            type: string
+            format: binary
+        video/ogg:
+          schema:
+            type: string
+            format: binary
+        video/quicktime:
+          schema:
+            type: string
+            format: binary
+        video/webm:
+          schema:
+            type: string
+            format: binary
+        video/x-ms-wmv:
+          schema:
+            type: string
+            format: binary
+        video/x-flv:
+          schema:
+            type: string
+            format: binary
+      required: true
+  responses:
+    createMessageResponse:
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/message"
+    createMultiChannelMessageResponse:
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/createMultiChannelMessageResponse"
+    listMessagesResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagesList"
+    getMediaResponse:
+      description: OK
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            description: Successful Operation
+            format: binary
+    listMediaResponse:
+      description: OK
+      headers:
+        Continuation-Token:
+          description: Continuation token used to retrieve subsequent media.
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/media"
+    messagingBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagingRequestError"
+    messagingNotAcceptableError:
+      description: Not Acceptable
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagingRequestError"
+    createMessageBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/createMessageRequestError"
+    messagingUnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagingRequestError"
+    messagingForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagingRequestError"
+    messagingNotFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagingRequestError"
+    messagingMethodNotAllowedError:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagingRequestError"
+    messagingInvalidMediaTypeError:
+      description: Unsupported Media Type
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagingRequestError"
+    messagingTooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagingRequestError"
+    messagingInternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/messagingRequestError"
+    multiChannelBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/multiChannelError"
+          example:
+            links: [ ]
+            data: null
+            errors:
+              - type: "request-validation"
+                description: "The 'channelList[0].from' field must contain exactly one telephone number"
+                source:
+                  field: "channelList[0].from"
+    multiChannelNotAcceptableError:
+      description: Not Acceptable
+      # Unsurprisingly, if the accept header is bad spring has trouble generating a response; could be fixed.
+    multiChannelUnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/multiChannelError"
+          example:
+            links: [ ]
+            data: null
+            errors:
+              - type: "unauthorized"
+                description: "Authentication Failed"
+                source: { }
+    multiChannelForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/multiChannelError"
+          example:
+            links: [ ]
+            data: null
+            errors:
+              - type: "forbidden"
+                description: "Access Denied"
+                source: { }
+    multiChannelNotFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/multiChannelError"
+          example:
+            links: [ ]
+            data: null
+            errors:
+              - type: "forbidden"
+                description: "Resource not found."
+                source: { }
+    multiChannelMethodNotAllowedError:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/multiChannelError"
+          example:
+            links: [ ]
+            data: null
+            errors:
+              - type: "method-not-allowed"
+                description: "Method 'PUT' not supported for this resource."
+                source: { }
+    multiChannelInvalidMediaTypeError:
+      description: Unsupported Media Type
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/multiChannelError"
+          example:
+            links: [ ]
+            data: null
+            errors:
+              - type: "unsupported-content-type"
+                description: "Content-Type 'application/xml;charset=UTF-8' is not supported. Please use 'application/json'"
+                source:
+                  header: "Content-Type"
+    multiChannelTooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/multiChannelError"
+          example:
+            links: [ ]
+            data: null
+            errors:
+              - type: "rate-limit-exceeded"
+                description: "You have exceeded your rate limit for this endpoint. Please retry later."
+                source: { }
+    multiChannelInternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/multiChannelError"
+          example:
+            links: [ ]
+            data: null
+            errors:
+              - type: "internal-server-error"
+                description: "Internal server error. No further information available"
+                source: { }
+  callbacks:
+    inboundCallback:
+      "{inboundCallbackUrl}":
+        post:
+          requestBody:
+            required: true
+            description: |-
+              <p>This Inbound Message Webhook is an envelope containing either a received (MO) message to your 
+              message-enabled Bandwidth telephone number or a multichannel client's response to a suggestion response 
+              or location request. 
+              <p>The payload type will be one of <code>message-received</code>, <code>suggestion-response</code>, or <code>location-request-response</code>.
+              <p>Note that <code>suggestion-response</code> and <code>location-request-response</code> callback types are pertinent only for RBM messages sent from the <code>/messages/multiChannel</code> endpoint.
+              </p><p>Please visit <a href='/docs/messaging/webhooks/'>Webhooks</a></p>
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/inboundCallback"
+                examples:
+                  smsMessageReceivedCallback:
+                    $ref: '#/components/examples/smsMessageReceivedCallbackExample'
+                  mmsMessageReceivedCallback:
+                    $ref: '#/components/examples/mmsMessageReceivedCallbackExample'
+          responses:
+            "200":
+              description: OK
+            "202":
+              description: Accepted
+    statusCallback:
+      "{statusCallbackUrl}":
+        post:
+          requestBody:
+            required: true
+            description: |-
+              <p>This Outbound Message Webhook is an envelope containing status information regarding a message sent (MT)
+              from your message-enabled Bandwidth telephone number.
+               <p>The payload type will be one of <code>message-sending</code>, <code>message-delivered</code>, <code>message-failed</code> or <code>message-read</code>.
+               <p>Note that <code>message-read</code> callbacks are pertinent only for RBM messages sent from the <code>/messages/multiChannel</code> endpoint.
+              </p><p>Please visit <a href='/docs/messaging/webhooks/'>Webhooks</a></p>
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/statusCallback"
+                examples:
+                  messageSendingCallback:
+                    $ref: '#/components/examples/messageSendingCallbackExample'
+                  smsMessageDeliveredCallback:
+                    $ref: '#/components/examples/smsMessageDeliveredCallbackExample'
+                  mmsMessageDeliveredCallback:
+                    $ref: '#/components/examples/mmsMessageDeliveredCallbackExample'
+                  groupMmsMessageDeliveredCallback:
+                    $ref: '#/components/examples/groupMmsMessageDeliveredCallbackExample'
+                  messageFailedCallback:
+                    $ref: '#/components/examples/messageFailedCallbackExample'
+          responses:
+            "200":
+              description: OK
+            "202":
+              description: Accepted
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: |-
+        Basic authentication is a simple authentication scheme built into the HTTP protocol. To use it, send your HTTP requests with an `Authorization` header that contains the word `Basic` followed by a space and a Base64-encoded string `username:password`.
+
+        - Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+  examples:
+    smsMessageReceivedCallbackExample:
+      summary: An example of a sms message-received callback body.
+      value:
+        time: "2025-01-06T15:43:35.502180Z"
+        type: message-received
+        to: "+12345678902"
+        description: Incoming message received
+        message:
+          id: "14762070468292kw2fuqty55yp2b2"
+          owner: "+12345678902"
+          applicationId: "93de2206-9669-4e07-948d-329f4b722ee2"
+          time: "2025-01-06T15:43:34.000000Z"
+          segmentCount: 1
+          direction: in
+          to:
+            - "+12345678902"
+          from: "+12345678901"
+          text: "Hey, check out this SMS!"
+    mmsMessageReceivedCallbackExample:
+      summary: An example of a mms message-received callback body.
+      value:
+        time: "2024-09-14T18:20:45.160744Z"
+        type: message-received
+        to: "+12345678902"
+        description: Incoming message received
+        message:
+          id: "14762070468292kw2fuqty55yp2b2"
+          owner: "+12345678902"
+          applicationId: "93de2206-9669-4e07-948d-329f4b722ee2"
+          time: "2024-09-14T18:20:45.160744Z"
+          segmentCount: 1
+          direction: in
+          to:
+            - "+12345678902"
+            - "+12345678903"
+          from: "+12345678901"
+          text: "Hey, check out the MMS!"
+          media:
+            - "https://messaging.bandwidth.com/api/v2/users/9900902/media/14762070468292kw2fuqty55yp2b2/0/bw.png"
+    messageSendingCallbackExample:
+      summary: An example of a message-sending callback body.
+      value:
+        time: "2024-06-25T18:42:36.979456Z"
+        type: message-sending
+        to: "+15554443333"
+        description: Message is sending to carrier.
+        message:
+          id: "1593110555875xo7watq5px6rbe5d"
+          owner: "+15552221111"
+          applicationId: "cfd4fb83-7531-4acc-b471-42d0bb76a65c"
+          time: "2024-06-25T18:42:35.876906Z"
+          segmentCount: 1
+          direction: out
+          to:
+            - "+15554443333"
+          from: "+15552221111"
+          text: ""
+          media:
+            - "https://dev.bandwidth.com/images/bandwidth-logo.png"
+          tag: your tag here
+    smsMessageDeliveredCallbackExample:
+      summary: An example of a sms message-delivered callback body.
+      value:
+        type: message-delivered
+        time: "2024-09-14T18:20:11.160744Z"
+        description: Message delivered to carrier.
+        to: "+12345678902"
+        message:
+          id: "14762070468292kw2fuqty55yp2b2"
+          time: "2024-09-14T18:20:11.160744Z"
+          to:
+            - "+12345678902"
+          from: "+12345678901"
+          text: ""
+          applicationId: "93de2206-9669-4e07-948d-329f4b722ee2"
+          owner: "+12345678902"
+          direction: out
+          segmentCount: 1
+    mmsMessageDeliveredCallbackExample:
+      summary: An example of a mms message-delivered callback body.
+      value:
+        type: message-delivered
+        time: "2024-09-14T18:20:24.160544Z"
+        description: Message delivered to carrier.
+        to: "+12345678902"
+        message:
+          id: "14762070468292kw2fuqty55yp2b2"
+          time: "2024-09-14T18:20:24.160544Z"
+          to:
+            - "+12345678902"
+          from: "+12345678901"
+          text: ""
+          applicationId: "93de2206-9669-4e07-948d-329f4b722ee2"
+          owner: "+12345678902"
+          direction: out
+          segmentCount: 1
+          media:
+            - "https://dev.bandwidth.com/images/bandwidth-logo.png"
+    groupMmsMessageDeliveredCallbackExample:
+      summary: An example of a group mms message-delivered callback body.
+      value:
+        type: message-delivered
+        time: "2024-09-14T18:20:17.160544Z"
+        description: Message delivered to carrier.
+        to: "+12345678902"
+        message:
+          id: "14762070468292kw2fuqty55yp2b2"
+          time: "2024-09-14T18:20:17.160544Z"
+          to:
+            - "+12345678902"
+            - "+12345678903"
+          from: "+12345678901"
+          text: ""
+          applicationId: "93de2206-9669-4e07-948d-329f4b722ee2"
+          owner: "+12345678902"
+          direction: out
+          segmentCount: 1
+    messageFailedCallbackExample:
+      summary: An example of a message-failed callback body.
+      value:
+        type: message-failed
+        time: "2024-12-18T16:51:27.704450Z"
+        description: forbidden to country
+        to: "+52345678903"
+        errorCode: 4432
+        message:
+          id: "14762070468292kw2fuqty55yp2b2"
+          time: "2024-12-18T16:51:27.704450Z"
+          to:
+            - "+12345678902"
+            - "+52345678903"
+          from: "+12345678901"
+          text: ""
+          applicationId: "93de2206-9669-4e07-948d-329f4b722ee2"
+          media:
+            - "https://dev.bandwidth.com/images/bandwidth-logo.png"
+          owner: "+12345678901"
+          direction: out
+          segmentCount: 1
+security:
+  - Basic: []
+tags:
+  - name: Messages
+  - name: Media
+  - name: Multi-Channel

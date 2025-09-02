@@ -1,0 +1,25 @@
+[project]
+name = "bw-mcp-server"
+version = "0.1.0"
+description = "Bandwidth MCP Server"
+authors = [
+    {name = "Bandwidth", email = "dx@bandwidth.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx~=0.28.0",
+    "fastmcp~=2.11.0",
+    "pyyaml~=6.0.0",
+]
+
+[project.scripts]
+start = "app:main"
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.1.0",
+    "pytest-httpx>=0.35.0",
+]
