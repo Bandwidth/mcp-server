@@ -8,8 +8,8 @@ The server is provided as a python package and may be cloned directly from this 
 Clone directly from this git repository using:
 
 ```shell
-git clone https://github.com/Bandwidth/bandwidth-mcp-server.git
-cd bandwidth-mcp-server
+git clone https://github.com/Bandwidth/mcp-server.git
+cd mcp-server
 ```
 
 ## Getting Started
@@ -114,7 +114,7 @@ Then follow the prompts like the example below.
 │  bw-mcp-server
 │
 ◇  What command should be run?
-│  uvx --from /path/to/bandwidth-mcp-server start
+│  uvx --from /path/to/mcp-server start
 ```
 
 > **_NOTE:_** If you configure environment variables with Goose, it will prioritize those over your system environment variables.
@@ -129,7 +129,7 @@ Then follow the prompts like the example below.
     "mcpServers": {
         "bw-mcp-server": {
             "command":"uvx",
-            "args": ["--from", "/path/to/bandwidth-mcp-server", "start"],
+            "args": ["--from", "/path/to/mcp-server", "start"],
             "env": {
                 "BW_USERNAME": "<insert-bw-username>",
                 "BW_PASSWORD": "<insert-bw-password>",
@@ -147,7 +147,7 @@ Then follow the prompts like the example below.
 2. Choose `Command (stdio)`, then enter the full command to start the server. (Example Below)
 
 ```shell
-uvx --from /path/to/bandwidth-mcp-server start
+uvx --from /path/to/mcp-server start
 ```
 
 3. Choose a name for the server (ie. `bw-mcp-server`) and select if you'd like it to be enabled Globally or only in the current workspace.
@@ -159,7 +159,7 @@ uvx --from /path/to/bandwidth-mcp-server start
         "bw-mcp-server": {
             "type": "stdio",
             "command": "uvx",
-            "args": ["--from", "/path/to/bandwidth-mcp-server", "start"],
+            "args": ["--from", "/path/to/mcp-server", "start"],
             "env": {
                 "BW_USERNAME": "<insert-bw-username>",
                 "BW_PASSWORD": "<insert-bw-password>",
@@ -184,7 +184,7 @@ uvx --from /path/to/bandwidth-mcp-server start
     "mcpServers": {
         "Bandwidth": {
             "command": "uvx",
-            "args": ["--from", "/path/to/bandwidth-mcp-server", "start"],
+            "args": ["--from", "/path/to/mcp-server", "start"],
             "env": {
                 "BW_USERNAME": "<insert-bw-username>",
                 "BW_PASSWORD": "<insert-bw-password>",
@@ -197,7 +197,7 @@ uvx --from /path/to/bandwidth-mcp-server start
 ```
 
 > **_NOTE:_** You can also run the server directly from our github repo by replacing
-`/path/to/bandwidth-mcp-server` with: `git+https://github.com/Bandwidth/bandwidth-mcp-server.git`
+`/path/to/mcp-server` with: `git+https://github.com/Bandwidth/mcp-server.git`
 
 > **_NOTE:_** We've noticed some issues with Claude not being able to see MCP resources. This could require you to manually enter some tool parameters normally included in our config resource.
 

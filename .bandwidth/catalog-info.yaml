@@ -2,10 +2,10 @@ apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   schemaVersion: v1.0.0
-  name: bandwidth-mcp-server-location
-  description: Links to additional entities in the bandwidth-mcp-server repository.
+  name: mcp-server-location
+  description: Links to additional entities in the mcp-server repository.
   annotations:
-    github.com/project-slug: Bandwidth/bandwidth-mcp-server
+    github.com/project-slug: Bandwidth/mcp-server
 spec:
   targets:
     - ./component.yaml
