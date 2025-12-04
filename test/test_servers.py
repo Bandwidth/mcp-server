@@ -17,7 +17,7 @@ async def create_mcp_server(name=None, tools=None, excluded_tools=None):
     return mcp
 
 
-def calculate_expected_tools(tools, excluded_tools, total_tools=46):
+def calculate_expected_tools(tools, excluded_tools, total_tools=44):
     if tools and not excluded_tools:
         return len(tools)
     elif excluded_tools:
