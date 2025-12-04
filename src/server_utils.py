@@ -109,7 +109,7 @@ async def fetch_openapi_spec(url: str) -> Dict[str, Any]:
         spec_object = yaml.safe_load(spec_text)
         if not spec_object:
             raise ValueError(f"Empty or invalid YAML spec from {url}")
-
+        
         return _clean_openapi_spec(spec_object)
     except httpx.HTTPError as e:
         raise RuntimeError(f"Failed to fetch OpenAPI spec from {url}: {e}") from e
