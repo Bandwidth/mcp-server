@@ -1,0 +1,724 @@
+openapi: 3.1.0
+info:
+  title: Phone Number Lookup V2
+  version: 2.1.0
+  contact:
+    name: Bandwidth Support
+    email: support@bandwidth.com
+    url: https://support.bandwidth.com
+  termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
+  description: >-
+    A Bandwidth API to provide carrier information for a telephone number or
+    batch of telephone numbers.
+
+
+    Currently supports lookups of telephone numbers in the mainland United
+    States, Alaska, Hawaii, the District of Columbia and Canada. Canadian
+    numbers will not provide voice and messaging providers. Telephone numbers
+    submitted must be in E.164 format to be processed.
+
+
+    **PLEASE NOTE**: The NPA-NXX associated with an LRN and/or any derived or
+    associated carrier information may only be used by non-NPAC users for the
+    purposes of Rating, Routing, Billing and Network Maintenance as defined in
+    [NPAC US Permitted Use
+    Clarifications](https://numberportability.com/about/permitted-use). Any
+    other uses are expressly restricted.
+
+
+    ## Base Path
+
+    `https://api.bandwidth.com/v2`
+
+
+    ## DNI-Only
+
+    Properties labeled *DNI-Only* in the Response Schema are only available to
+    accounts that have subscribed to the Dynamic Number Intelligence bundled
+    solution. Accounts not subscribed to DNI will not see these properties in
+    the responses.
+
+
+    ## Timestamps
+
+    Properties in this endpoint with a datatype of `date-time-local` have no
+    time zone because these timestamps are sourced from a wide variety of
+    carriers. Not all carriers provide time zone information.
+servers:
+  - url: https://api.bandwidth.com/v2
+    description: Production
+paths:
+  /accounts/{accountId}/phoneNumberLookup:
+    post:
+      summary: Create Synchronous Number Lookup
+      description: >-
+        Creates a synchronous phone number lookup request. Maximum of 100
+        telephone numbers per request.
+      operationId: createSyncLookup
+      tags:
+        - Phone Number Lookup
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/createSyncLookupRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/createSyncLookupResponse'
+        default:
+          $ref: '#/components/responses/tnLookupDefaultResponse'
+  /accounts/{accountId}/phoneNumberLookup/bulk:
+    post:
+      summary: Create Asynchronous Bulk Number Lookup
+      description: >-
+        Creates an asynchronous bulk phone number lookup request. Maximum of
+        15,000 telephone numbers per request. Use the [Get Asynchronous Bulk
+        Number Lookup](#tag/Phone-Number-Lookup/operation/getAsyncBulkLookup)
+        endpoint to check the status of the request and view the results.
+      operationId: createAsyncBulkLookup
+      tags:
+        - Phone Number Lookup
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/createAsyncBulkLookupRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/createAsyncBulkLookupResponse'
+        default:
+          $ref: '#/components/responses/tnLookupDefaultResponse'
+  /accounts/{accountId}/phoneNumberLookup/bulk/{requestId}:
+    get:
+      summary: Get Asynchronous Bulk Number Lookup
+      description: >-
+        Get an existing [Asynchronous Bulk Number
+        Lookup](#tag/Phone-Number-Lookup/operation/createAsyncBulkLookup). Use
+        this endpoint to check the status of the request and view the results.
+      operationId: getAsyncBulkLookup
+      tags:
+        - Phone Number Lookup
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getAsyncBulkLookupResponse'
+        default:
+          $ref: '#/components/responses/tnLookupDefaultResponse'
+components:
+  schemas:
+    completedLookupStatusEnum:
+      type: string
+      enum:
+        - COMPLETE
+        - PARTIAL_COMPLETE
+        - FAILED
+      example: COMPLETE
+    inProgressLookupStatusEnum:
+      type: string
+      enum:
+        - IN_PROGRESS
+        - COMPLETE
+        - PARTIAL_COMPLETE
+        - FAILED
+      example: COMPLETE
+    deactivationEventEnum:
+      type: string
+      description: >
+        [DNI-Only](#section/DNI-Only).
+
+        `DEACTIVATED` if the carrier reported a deactivation event for this
+        phone number.
+      enum:
+        - DEACTIVATED
+    latestMessageDeliveryStatusEnum:
+      type: string
+      description: >-
+        [DNI-Only](#section/DNI-Only). The current delivery status of the phone
+        number.
+
+        - ACTIVE: A message was successfully sent to the number (delivery code
+        0).
+
+        - DEACTIVATED: A message was not delivered to a number (delivery code
+        720)
+
+        - UNKNOWN: Bandwidth cannot find an delivery status entry for the
+        number.
+      enum:
+        - ACTIVE
+        - DEACTIVATED
+        - UNKNOWN
+    lineTypeEnum:
+      type: string
+      enum:
+        - FIXED
+        - VOIP-FIXED
+        - MOBILE
+        - VOIP
+      example: MOBILE
+    requestId:
+      type: string
+      format: uuid
+      description: The phone number lookup request ID from Bandwidth.
+      example: 004223a0-8b17-41b1-bf81-20732adf5590
+    linkSchema:
+      title: Link
+      type: object
+      properties:
+        href:
+          type: string
+          description: URI of the link.
+          example: /relative/uri
+        rel:
+          type: string
+          description: Specifies the relationship between this link and the resource.
+          example: aRelatedResource
+        method:
+          type: string
+          description: HTTP method to be used.
+          example: GET
+    lookupErrorSchema:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Validation error code
+          example: NO-MATCH
+        description:
+          type: string
+          description: Description of validation error
+          example: Example error description
+        type:
+          type: string
+          description: Type of validation error
+          example: NumberInventory
+        meta:
+          type: object
+          properties:
+            phoneNumbers:
+              type: array
+              items:
+                type: string
+                description: Phone number experiencing the error.
+              example:
+                - '+13992077164'
+                - '+19196104424'
+            message:
+              type: string
+              description: Message describing the error
+              example: Invalid TNs
+            code:
+              type: integer
+              description: Error code associated with the message
+              example: 1001
+    syncLookupRequest:
+      type: object
+      properties:
+        phoneNumbers:
+          description: Telephone numbers in E.164 format.
+          type: array
+          minimum: 1
+          maximum: 100
+          items:
+            type: string
+            pattern: ^\+[1-9]\d{1,14}$
+      required:
+        - phoneNumbers
+    asyncLookupRequest:
+      type: object
+      properties:
+        phoneNumbers:
+          description: Telephone numbers in E.164 format.
+          type: array
+          minimum: 1
+          maximum: 15000
+          items:
+            type: string
+            pattern: ^\+[1-9]\d{1,14}$
+      required:
+        - phoneNumbers
+    createSyncLookupResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/linkSchema'
+          example: []
+        data:
+          type: object
+          description: The phone number lookup response data
+          properties:
+            requestId:
+              $ref: '#/components/schemas/requestId'
+            status:
+              $ref: '#/components/schemas/completedLookupStatusEnum'
+            results:
+              type: array
+              description: >-
+                The carrier information results for the specified telephone
+                numbers.
+              items:
+                $ref: '#/components/schemas/lookupResult'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/lookupErrorSchema'
+    createAsyncBulkLookupResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          description: Links for pagination (if applicable)
+          items:
+            $ref: '#/components/schemas/linkSchema'
+        data:
+          type: object
+          description: The phone number lookup response data
+          properties:
+            requestId:
+              $ref: '#/components/schemas/requestId'
+            status:
+              $ref: '#/components/schemas/inProgressLookupStatusEnum'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/lookupErrorSchema'
+    getAsyncBulkLookupResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/linkSchema'
+          example: []
+        data:
+          type: object
+          description: The phone number lookup response data
+          properties:
+            requestId:
+              $ref: '#/components/schemas/requestId'
+            status:
+              $ref: '#/components/schemas/inProgressLookupStatusEnum'
+            results:
+              type: array
+              description: >-
+                The carrier information results for the specified telephone
+                number.
+              items:
+                $ref: '#/components/schemas/lookupResult'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/lookupErrorSchema'
+    lookupErrorResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/linkSchema'
+          example: []
+        data:
+          type: object
+          description: The phone number lookup response data
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/lookupErrorSchema'
+    lookupResult:
+      type: object
+      description: Carrier information results for the specified telephone number.
+      properties:
+        phoneNumber:
+          type: string
+          description: The telephone number in E.164 format.
+          example: '+10072904498'
+        lineType:
+          $ref: '#/components/schemas/lineTypeEnum'
+        messagingProvider:
+          type: string
+          description: The messaging service provider of the telephone number.
+          example: Verizon Wireless
+        voiceProvider:
+          type: string
+          description: The voice service provider of the telephone number.
+          example: Verizon Wireless
+        countryCodeA3:
+          type: string
+          description: >-
+            The country code of the telephone number in ISO 3166-1 alpha-3
+            format.
+          example: USA
+        deactivationReporter:
+          type: string
+          description: >
+            [DNI-Only](#section/DNI-Only).
+
+            The carrier that reported a deactivation event for this phone
+            number.
+        deactivationDate:
+          type: string
+          format: date-time-local
+          description: >-
+            [DNI-Only](#section/DNI-Only). The datetime the carrier reported a
+            deactivation event.
+          example: 2025-06-20 18:35
+        deactivationEvent:
+          $ref: '#/components/schemas/deactivationEventEnum'
+        latestMessageDeliveryStatus:
+          $ref: '#/components/schemas/latestMessageDeliveryStatusEnum'
+        initialMessageDeliveryStatusDate:
+          type: string
+          format: date
+          description: >-
+            [DNI-Only](#section/DNI-Only). The date the phone number entered the
+            status described in `latestMessageDeliveryStatus`. 
+
+            Think of this as the "start time" for that status.
+
+            Value resets every time the `latestMessageDeliveryStatus` changes.
+          example: '2025-06-20'
+        latestMessageDeliveryStatusDate:
+          type: string
+          format: date
+          description: >-
+            [DNI-Only](#section/DNI-Only). The date bandwidth last received
+            delivery status information for this phone number. 
+
+            Use this field to understand how up-to-date the
+            `latestMessageDeliveryStatus` is.
+
+            Value resets every time the `latestMessageDeliveryStatus` changes.
+          example: '2025-06-21'
+  responses:
+    createSyncLookupResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createSyncLookupResponse'
+          examples:
+            lookupCompleteWithDniExample:
+              $ref: '#/components/examples/lookupCompleteWithDniExample'
+            lookupCompleteExample:
+              $ref: '#/components/examples/lookupCompleteExample'
+            lookupPartialExample:
+              $ref: '#/components/examples/lookupPartialExample'
+            lookupFailedExample:
+              $ref: '#/components/examples/lookupFailedExample'
+    createAsyncBulkLookupResponse:
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createAsyncBulkLookupResponse'
+          examples:
+            lookupInProgressExample:
+              $ref: '#/components/examples/lookupInProgressExample'
+    getAsyncBulkLookupResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getAsyncBulkLookupResponse'
+          examples:
+            lookupCompleteWithDniExample:
+              $ref: '#/components/examples/lookupCompleteWithDniExample'
+            lookupCompleteExample:
+              $ref: '#/components/examples/lookupCompleteExample'
+            lookupInProgressExample:
+              $ref: '#/components/examples/lookupInProgressExample'
+            lookupPartialExample:
+              $ref: '#/components/examples/lookupPartialExample'
+            lookupFailedExample:
+              $ref: '#/components/examples/lookupFailedExample'
+    tnLookupDefaultResponse:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/lookupErrorResponse'
+          examples:
+            badRequest:
+              $ref: '#/components/examples/badRequestExample'
+            unauthorized:
+              $ref: '#/components/examples/unauthorizedExample'
+            forbidden:
+              $ref: '#/components/examples/forbiddenExample'
+            mediaType:
+              $ref: '#/components/examples/unsupportedMediaTypeExample'
+            notFound:
+              $ref: '#/components/examples/notFoundExample'
+            tooManyRequests:
+              $ref: '#/components/examples/tooManyRequestsExample'
+            internalServer:
+              $ref: '#/components/examples/internalServerErrorExample'
+  parameters:
+    accountId:
+      in: path
+      name: accountId
+      required: true
+      schema:
+        type: string
+        description: Your Bandwidth Account ID.
+        example: '9900000'
+    requestId:
+      in: path
+      name: requestId
+      required: true
+      schema:
+        type: string
+        format: uuid
+        description: The phone number lookup request ID from Bandwidth.
+        example: 004223a0-8b17-41b1-bf81-20732adf5590
+  examples:
+    singleNumberRequestExample:
+      summary: Number Lookup Request
+      value:
+        phoneNumbers:
+          - '+19196104423'
+    multipleNumberRequestExample:
+      summary: Number Lookup Request for Multiple Numbers
+      value:
+        phoneNumbers:
+          - '+19196104423'
+          - '+19196104424'
+    lookupInProgressExample:
+      summary: Numbers Lookup In Progress
+      value:
+        links:
+          - href: href
+            rel: rel
+            method: GET
+        data:
+          requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+          status: IN_PROGRESS
+          results: []
+        errors: []
+    lookupFailedExample:
+      summary: Numbers Lookup Failed
+      value:
+        links:
+          - href: href
+            rel: rel
+            method: GET
+        data:
+          requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+          status: FAILED
+          results: []
+        errors:
+          - code: NO-MATCH
+            description: The following TNs could not be found in the Number Industry data
+            meta:
+              phoneNumbers:
+                - '+13992077164'
+              message: Invalid TNs
+              code: 1001
+            type: NumberInventory
+    lookupPartialExample:
+      summary: Numbers Lookup Partial Complete
+      value:
+        links:
+          - href: href
+            rel: rel
+            method: GET
+        data:
+          requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+          status: PARTIAL_COMPLETE
+          results:
+            - phoneNumber: '+19196104423'
+              lineType: MOBILE
+              messagingProvider: Verizon Wireless
+              voiceProvider: Verizon Wireless
+              countryCodeA3: USA
+            - phoneNumber: '+19196104424'
+              lineType: MOBILE
+              messagingProvider: T-Mobile USA
+              voiceProvider: T-Mobile USA
+              countryCodeA3: USA
+        errors:
+          - code: NO-MATCH
+            description: The following TNs could not be found in the Number Industry data
+            meta:
+              phoneNumbers:
+                - '+13992077164'
+              message: Invalid TNs
+              code: 1001
+            type: NumberInventory
+    lookupCompleteExample:
+      summary: Numbers Lookup Complete (without DNI)
+      value:
+        links:
+          - href: href
+            rel: rel
+            method: GET
+        data:
+          requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+          status: COMPLETE
+          results:
+            - phoneNumber: '+10072904497'
+              lineType: MOBILE
+              messagingProvider: Verizon Wireless
+              voiceProvider: Verizon Wireless
+              countryCodeA3: USA
+            - phoneNumber: '+10072904498'
+              lineType: MOBILE
+              messagingProvider: T-Mobile USA
+              voiceProvider: T-Mobile USA
+              countryCodeA3: USA
+        errors: []
+    lookupCompleteWithDniExample:
+      summary: Numbers Lookup Complete (with DNI)
+      value:
+        links:
+          - href: href
+            rel: rel
+            method: GET
+        data:
+          requestId: 20732adf-bf81-8b17-41b1-004223a05590
+          status: COMPLETE
+          results:
+            - phoneNumber: '+10072904497'
+              countryCodeA3: USA
+              lineType: MOBILE
+              messagingProvider: T-MOBILE USA INC
+              voiceProvider: T-MOBILE USA INC
+              latestMessageDeliveryStatus: ACTIVE
+              initialMessageDeliveryStatusDate: '2025-05-14'
+              latestMessageDeliveryStatusDate: '2025-05-18'
+            - phoneNumber: '+10072904498'
+              countryCodeA3: USA
+              lineType: FIXED
+              voiceProvider: VERIZON
+              latestMessageDeliveryStatus: DEACTIVATED
+              initialMessageDeliveryStatusDate: '2025-09-05'
+              latestMessageDeliveryStatusDate: '2025-09-05'
+            - phoneNumber: '+10072904499'
+              lineType: MOBILE
+              countryCodeA3: USA
+              messagingProvider: VERIZON
+              voiceProvider: VERIZON
+              deactivationReporter: Verizon Wireless
+              deactivationDate: '2025-09-29 01:23:00'
+              deactivationEvent: DEACTIVATED
+              latestMessageDeliveryStatus: UNKNOWN
+        errors: []
+    badRequestExample:
+      summary: Example Bad Request Error
+      value:
+        links: []
+        data: {}
+        errors:
+          - type: bad-request
+            description: >-
+              Bad Request. Ensure that you have set the requestId as a URL path
+              parameter.
+    unauthorizedExample:
+      summary: Unauthorized Error
+      value:
+        links: []
+        data: {}
+        errors:
+          - type: Unauthorized
+            description: You are not authorized to access this resource.
+            code: '1'
+        page: null
+    forbiddenExample:
+      summary: Forbidden Error
+      value:
+        links: []
+        data: {}
+        errors:
+          - type: Forbidden
+            description: You do not have permission to access this resource.
+            code: '2'
+        page: null
+    unsupportedMediaTypeExample:
+      summary: Unsupported Media Type Error
+      value:
+        links: []
+        data: {}
+        errors:
+          - type: invalid-content-type
+            description: >-
+              Invalid content-type. Ensure that your content-type header is set
+              to application/json.
+    notFoundExample:
+      summary: Not Found Error
+      value:
+        links: []
+        data: {}
+        errors:
+          - type: not-found
+            description: >-
+              RequestId not found. Ensure that the requestId used in the URL
+              path is valid and maps to a previous request that was submitted.
+    tooManyRequestsExample:
+      summary: Too Many Requests Error
+      value:
+        links: []
+        data: {}
+        errors:
+          - type: rate-limiting
+            description: >-
+              Rate limit exceeded. Wait for the time specified in the
+              Retry-After header before sending another request.
+    internalServerErrorExample:
+      summary: Internal Server Error
+      value:
+        links: []
+        data: {}
+        errors:
+          - code: '500'
+            type: unexpected-error
+            description: >-
+              Unexpected error. Please contact Bandwidth Support if your
+              requests are receiving this status code for an extended period of
+              time.
+  requestBodies:
+    createSyncLookupRequest:
+      description: Synchronous phone number lookup request.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/syncLookupRequest'
+          examples:
+            singleNumberRequestExample:
+              $ref: '#/components/examples/singleNumberRequestExample'
+            multipleNumberRequestExample:
+              $ref: '#/components/examples/multipleNumberRequestExample'
+    createAsyncBulkLookupRequest:
+      description: Asynchronous bulk phone number lookup request.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/asyncLookupRequest'
+          examples:
+            multipleNumberRequestExample:
+              $ref: '#/components/examples/multipleNumberRequestExample'
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: >-
+        Basic authentication is a simple authentication scheme built into the
+        HTTP protocol. To use it, send your HTTP requests with an
+        `Authorization` header that contains the word `Basic` followed by a
+        space and a Base64-encoded string `username:password`.
+
+
+        - Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.bandwidth.com/api/v1/oauth2/token
+          scopes: {}
+security:
+  - Basic: []
+  - OAuth2: []
+tags:
+  - name: Phone Number Lookup

@@ -37,4 +37,4 @@ async def test_fetch_openapi_spec_http_error():
 async def test_fetch_openapi_spec_invalid_yaml():
     """Test that fetching an invalid YAML file raises a YAMLError."""
     with pytest.raises(RuntimeError):
-        await fetch_openapi_spec("https://example.com")
+        await fetch_openapi_spec("https://not-real-564987132489746sadfg.com")
