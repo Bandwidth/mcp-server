@@ -1,5 +1,6 @@
 import asyncio
 import os
+
 os.environ["FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER"] = "true"
 
 from fastmcp import FastMCP
