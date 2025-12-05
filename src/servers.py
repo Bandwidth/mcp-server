@@ -16,7 +16,7 @@ api_server_info: Dict[str, Dict[str, Any]] = {
         "url": "https://dev.bandwidth.com/spec/multi-factor-auth.yml"
     },
     "phone-number-lookup": {
-        "url": "https://dev.bandwidth.com/spec/phone-number-lookup.yml"
+        "url": "https://dev.bandwidth.com/spec/phone-number-lookup-v2.yml"
     },
     "insights": {"url": "https://dev.bandwidth.com/spec/insights.yml"},
     "end-user-management": {

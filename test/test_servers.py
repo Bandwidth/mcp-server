@@ -17,7 +17,7 @@ async def create_mcp_server(name=None, tools=None, excluded_tools=None):
     return mcp
 
 
-def calculate_expected_tools(tools, excluded_tools, total_tools=46):
+def calculate_expected_tools(tools, excluded_tools, total_tools=47):
     if tools and not excluded_tools:
         return len(tools)
     elif excluded_tools:
@@ -46,7 +46,7 @@ async def test_full_mcp_server_creation(tools, excluded_tools, httpx_mock: HTTPX
     for name in [
         "messaging",
         "multi-factor-auth",
-        "phone-number-lookup",
+        "phone-number-lookup-v2",
         "insights",
         "end-user-management",
     ]:
@@ -84,10 +84,10 @@ spec_list = [
         "Basic dGVzdF91c2VyX21mYTp0ZXN0X3Bhc3NfbWZh",
     ),
     (
-        "https://dev.bandwidth.com/spec/phone-number-lookup.yml",
+        "https://dev.bandwidth.com/spec/phone-number-lookup-v2.yml",
         {"BW_USERNAME": "test_user_tnlookup", "BW_PASSWORD": "test_pass_tnlookup"},
-        "https://numbers.bandwidth.com/api/v1/",
-        {"createLookup", "getLookupStatus"},
+        "https://api.bandwidth.com/v2/",
+        {"createSyncLookup", "createAsyncBulkLookup", "getAsyncBulkLookup"},
         "Basic dGVzdF91c2VyX3RubG9va3VwOnRlc3RfcGFzc190bmxvb2t1cA==",
     ),
 ]

@@ -1,4 +1,8 @@
 import asyncio
+import os
+
+os.environ["FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER"] = "true"
+
 from fastmcp import FastMCP
 from servers import create_bandwidth_mcp
 from config import load_config, get_enabled_tools, get_excluded_tools
