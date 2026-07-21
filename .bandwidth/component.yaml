@@ -6,6 +6,7 @@ metadata:
   description: Official Bandwidth MCP Server
   annotations:
     github.com/project-slug: Bandwidth/mcp-server
+    bandwidth.com/languages: Python
   organization: BW
   costCenter: Development - Software Infra
   platformType: 
